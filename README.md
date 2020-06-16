@@ -19,7 +19,7 @@
     
 3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξηπυρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
 
-    > ![alt text](import screen_1) 
+    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_1.png) 
     >
     >
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
@@ -28,7 +28,7 @@
 
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
-   > ![alt text](import screen_2)
+   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_2.png)
     
    Παρόμοια πληροφορία μπορούμε να πάρουμε και με ακόμα έναν τρόπο. Μέσα στο **/robots.txt** αναγράφεται το εξής
    
@@ -147,12 +147,12 @@
    cookie της αρχικής σελίδας (http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/) που μας 
    είχε δοθεί και υποψιαστήκαμε ότι θα χρησιμοποιηθεί κάπου εκεί.
    
-   ![alt text](import screen_3)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_3.png)
     
    Διαγράφοντας το cookie που έχει και κάνοντας reload είδαμε ότι στη θέση του 204 εμφανίζει **"Bad sha256"**.
    Τότε σκεφτήκαμε ότι το value του cookie καθορίζει το τι θα εκτυπωθεί στη θέση του 204.
    
-   ![alt text](import screen_4)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_4.png)
    
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
    είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](part2)
@@ -181,7 +181,7 @@
    
    Payload: **PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pjo1YzE0MGQzNWRjYjQ2YTYyMmUyY2VkZjVlZjVjYzM2MzhjZGZmZDFjMTE4YzkzMzFmOGM4NDY2OWYwYjc0Nzgz**
 
-   ![alt text](import screen_5)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_5.png)
    
 <br/>
 
