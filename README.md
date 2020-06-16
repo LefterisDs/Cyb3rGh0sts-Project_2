@@ -157,31 +157,67 @@
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
    είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](part2)
    
-   Κάνοντας decrypt το: &nbsp;&nbsp; **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=**
+   Κάνοντας decrypt το: **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=**
    είδαμε ότι παράγει το: **204:fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a**
    
    Μετά κάναμε hashing του 204 με το sha-256 και είδαμε ότι παράγει το 2ο κομμάτι του decrypted base64.
 
    Άρα κατασκευάσαμε εν τέλει το καινούργιο value για το cookie σύμφωνα με τη συνάρτηση: base64( id:sha256(id) )
 
-   Έτσι παράχθηκε το: 'MTAwMDEzOjM2MjA5NTQyMzYyNzg3ZjIyMDU0MTgyYzNlNDE0MDlmZDFiMDQ4NmVjYjI4MmMwMmRjNTdiNGY5OGU0N2RlNzA='
+   Έτσι παράχθηκε το: **MTAwMDEzOjM2MjA5NTQyMzYyNzg3ZjIyMDU0MTgyYzNlNDE0MDlmZDFiMDQ4NmVjYjI4MmMwMmRjNTdiNGY5OGU0N2RlNzA=**
 
-   Βάζοντας το στο cookie εμφανίζει την κρυφή τοποθεσία του καταλόγου με τα backups από το κινητό του Γιώργου (/sekritbackups2444).
+   Βάζοντας το στο cookie, λοιπόν, εμφανίστηκε η κρυφή τοποθεσία του καταλόγου με τα backups από το κινητό του Γιώργου 
+   **/sekritbackups2444**.
 
    > --> Link: http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/sekritbackups2444/
+   
+   
+   #### Bonus
+   
+   Ακουλουθώντας την παραπάνω διαδικασία μπορέσαμε και κάναμε **XSS attack** στο site.
+   
+   Έτσι, με payload: **<script\>alert(1)</script\>**, μετατρέποντας το σε sha256 και μετά σε base64, εμφανίστηκε το alert message
+   στη σελίδα.
+   
+   Payload: **PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pjo1YzE0MGQzNWRjYjQ2YTYyMmUyY2VkZjVlZjVjYzM2MzhjZGZmZDFjMTE4YzkzMzFmOGM4NDY2OWYwYjc0Nzgz**
 
+   ![alt text](import screen_5)
+   
 <br/>
 
-10. Κατεβάσαμε όλα τα αρχεία και πήραμε το κομμάτι του hash που περιείχε το passphrase.key.truncated
-    Ακολουθώντας τις οδηγίες, πήραμε το secret "raccoon" που αναφερόταν στο 2ο .onion και φτιάξαμε ένα script, με το οποίο 
-    φτιάχναμε ημερομηνίες από την αρχή του 2020 και κάναμε το hashing του passphrase με χρήση του sha256().
+10. Από το καινούργιο path που βρήκαμε, κατεβάσαμε όλα τα αρχεία.
+    
+    Βρήκαμε μέσα στο **passphrase.key.truncated**, το πρώτο μέρος του hash του κωδικού με τον οποίο εγινε το _gpg encryption_.
+    
+    Ακολουθώντας τις οδηγίες, πήραμε το secret **"raccoon"** που αναφερόταν στο 2<sup>ο</sup> onion και δοκιμάσαμε όλες τις ημερομηνίες 
+    τελευταίας τροποποίησης των **.truncated** και των υπολοίπων αρχείων και εκείνες που αναφέρονταν στα κείμενα, αλλά επειδή καμία δεν 
+    έκανε την αποκρυπτογράφηση, φτιάξαμε το παρακάτω script που έκανε ένα _mini brute force_ με ημερομηνίες από 2020-01-01 -> 2020-06-31
+    (καθώς η τελευταία τροποίηση αρχείου αρχείου και των δύο onion είναι στις 2020-06-xx) και βρήκαμε τελικά τη σωστή ημερομηνία.
+    
+    ```python
+      from hashlib import sha256
 
-    Ελέγχαμε αν το κομμάτι του hash που είχε το truncated file περιέχεται σε αυτό που φτιάξαμε και εύκολα βρίσκουμε
-    την ημερομηνία να είναι: 2020-02-12
+      for i in range(1,7):
+         for j in range(1,32):
+         passphrase = "2020-0" + str(i) + "-"
+         if j < 10:
+            passphrase = passphrase + "0" + str(j)
+         else:
+            passphrase = passphrase + str(j)
+            passphrase = passphrase + " raccoon"
+            key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
 
-    Έτσι έχοντας όλο το passphrase και κάνοντας το hashing μπορούμε να κάνουμε decrypt τα .gpg αρχεία.
-    passphrase: 2020-02-12 raccoon
-    hash      : d1689c23e86421529297f3eb35db2fe261de9cbe19487d923c464d96ca00e138
+         if "d1689c23e86421529297" in key:
+            print(passphrase)
+            print(key)
+    ```
+
+    Ελέγχαμε αν το κομμάτι του hash που είχε το _truncated file_ περιέχεται σε αυτό που φτιάξαμε και εύκολα βρίσκουμε
+    την ημερομηνία να είναι: **2020-02-12**
+
+    Έτσι έχοντας όλο το passphrase και κάνοντας το hashing μπορούμε να κάνουμε decrypt τα .gpg αρχεία. \
+    **passphrase**: 2020-02-12 raccoon \
+    **hash**&emsp;&emsp;&nbsp;&nbsp;&nbsp;: d1689c23e86421529297f3eb35db2fe261de9cbe19487d923c464d96ca00e138
 
 <br/>
 
