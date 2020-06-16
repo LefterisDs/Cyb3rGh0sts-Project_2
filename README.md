@@ -324,7 +324,7 @@
 
 7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**.
    
-   Έτσι, περάσαμε τον αρχικό έλεγχο και μπήκαμε στο **index.html**, που περιείχε πληοροφρίες για το ***Missing Part of Plan X***.
+   Έτσι, περάσαμε τον αρχικό έλεγχο και μπήκαμε στο **index.html**, που περιείχε πληοροφρίες για το ***Missing Part for Plan X***.
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_12.png)
 
