@@ -1,29 +1,29 @@
 # 2020-project-2-cybergh0sts
+___
+## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp; Part 1 (_Finding Geaorge_)
+___
+1. Αρχικά, βρήκαμε με **View Page Source**, το σχόλιο που περιείχε το blog με τρόπους ασφάλισης ενός server
 
-                                       1ο Ερώτημα
-
-1. Βρήκαμε με View Page Source, το σχόλιο που περιείχε το blog με τρόπους ασφάλισης ενός server
-
-
-2. Από εκεί βρήκαμε ότι μπορούμε να χρησιμοποιήσουμε το /server-info για να δούμε πληροφορίες 
-    σχετικές με τον server
+2. Από εκεί βρήκαμε ότι μπορούμε να χρησιμοποιήσουμε το **/server-info** για να δούμε πληροφορίες 
+   σχετικές με τον server
 
     > --> Link: http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/server-info
 
 
-3. Εκεί βρήκαμε το 2ο .onion
+3. Έτσι, μέσα σε όλες τις πληροφορίες, βρήκαμε ότι αναφερόταν πως στο server αυτόν τρέχουν βρήκαμε το 2ο .onion
 
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
 
 
-4. Μετά από το /server-info ξανά, βρήκαμε ότ έχουμε πρόσβαση σε όλα τα .phps files
+4. Μετά από το **/server-info** ξανά, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
-    >--> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/server-info
-    >Info:     In file: /etc/apache2/mods-enabled/php7.0.conf
-    >            4: <FilesMatch ".+\.phps$">
-    >            9:   Require all granted
-    >             : </FilesMatch>
-
+    > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/server-info \
+    > Info:     In file: /etc/apache2/mods-enabled/php7.0.conf \
+    >             4: <FilesMatch ".+\.phps$"\> \
+    >             9:   Require all granted \
+    >              : </FilesMatch\>
+    
+    Αυτό μπορούμε να το βρούμε και με άλλον έναν τρόπο. Μέσω του **/robots.txt** όπου αναγράφονται
 
 5. Μετά χτυπήσαμε στο URL το access.phps και είδαμε ότι μπορούμε να δούμε το περιεχόμενό του
 
