@@ -276,7 +276,7 @@
 
 ## References
 
-<h5 id="ref_1"><sup>[1]</sup>https://www.robotstxt.org/robotstxt.html</h5>
-<h5 id="ref_1"><sup>[2]</sup>https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
-<h5 id="ref_1"><sup>[3]</sup>https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
-<h5 id="ref_1"><sup>[4]</sup>https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
+<h5 id="ref_1"><sup>[1]</sup>  https://www.robotstxt.org/robotstxt.html</h5>
+<h5 id="ref_1"><sup>[2]</sup>  https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
+<h5 id="ref_1"><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
+<h5 id="ref_1"><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
