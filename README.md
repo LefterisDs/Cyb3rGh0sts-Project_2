@@ -248,15 +248,15 @@
       y = "0." + str(key[16:32])
 
       mult  = 1/16
-      dec_x = 0.0
-      dec_y = 0.0
+      lat  = 0.0
+      long = 0.0
       for i in range(2,18):
-          dec_x = dec_x + int(x[i],16) * mult
-          dec_y = dec_y + int(y[i],16) * mult
+          lat = lat + int(x[i],16) * mult
+          long = long + int(y[i],16) * mult
           mult = mult / 16
 
-      print("Latitude : %.30lf"%dec_x)
-      print("Longitude: %.30lf"%dec_y)
+      print("Latitude : %.30lf"%lat)
+      print("Longitude: %.30lf"%long)
     ```
 
     **Location**&nbsp;&nbsp;: Vaux-Saules, 21440, France\
