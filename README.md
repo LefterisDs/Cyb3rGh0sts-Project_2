@@ -247,7 +247,7 @@
       x = "0." + str(key[:16])
       y = "0." + str(key[16:32])
 
-      mult  = 1/16
+      mult = 1/16
       lat  = 0.0
       long = 0.0
       for i in range(2,18):
