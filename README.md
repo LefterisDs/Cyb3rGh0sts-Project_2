@@ -174,7 +174,7 @@
    
    Ακουλουθώντας την παραπάνω διαδικασία μπορέσαμε και κάναμε **XSS attack** στο site.
    
-   Έτσι, με payload: **<script\>alert(1)</script\>**, μετατρέποντας το σε sha256 και μετά σε base64, εμφανίστηκε το alert message
+   Έτσι, με payload: **<script\>alert(1)</script\>**, μετατρέποντας το σε **sha256** και μετά σε **base64**, εμφανίστηκε το alert message
    στη σελίδα.
    
    Payload: **PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pjo1YzE0MGQzNWRjYjQ2YTYyMmUyY2VkZjVlZjVjYzM2MzhjZGZmZDFjMTE4YzkzMzFmOGM4NDY2OWYwYjc0Nzgz**
@@ -278,8 +278,7 @@
 <br/>
 
 2. Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
-   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**.[<sup>\[5\]</sup>](#5--httpsowasporgwww-
-   communityattacksformat_string_attack) [<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
+   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**. [<sup>\[5\]</sup>](#5--httpsowasporgwww-communityattacksformat_string_attack)[<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_7.png)
    
@@ -306,7 +305,7 @@
 5. Στη συνέχεια βρήκαμε, ότι η μεταβλητή **auth_username**, που δίνεται σαν όρισμα στην printf() την οποία θα εκμεταλλευτούμε, 
    αποθηκεύεται στη θέση: **$ebp - 0x40**. 
    
-   Άρα υπολογίζοντας το **offset** μεταξύ αυτών των θέσεων βρήκαμε ότι βάζοντας σαν **payload**: %7$s, θα μας επιστρέψει το περιεχόμενο
+   Άρα υπολογίζοντας το **offset** μεταξύ αυτών των θέσεων βρήκαμε ότι βάζοντας σαν payload: **%7$s**, θα μας επιστρέψει το περιεχόμενο
    του πίνακα **users\[\]**.
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_9.png)
@@ -323,9 +322,12 @@
    
 <br/>
 
-7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**
-
+7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**.
    
+   Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληοροφρίες για το ***Missing Part for Plan X***.
+   
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_12.png)
+
 ---
 ---
 
