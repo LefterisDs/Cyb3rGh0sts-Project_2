@@ -2,8 +2,6 @@
 
 ## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 1 (_Finding George_)
 
-<br/>
-
 1. Αρχικά, βρήκαμε με **View Page Source**, το σχόλιο που περιείχε το blog με τρόπους ασφάλισης ενός server
 
    > --> Link: https://blog.0day.rocks/securing-a-web-hidden-service-89d935ba1c1d
