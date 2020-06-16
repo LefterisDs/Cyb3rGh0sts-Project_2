@@ -2,16 +2,20 @@
 
 ## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 1 (_Finding Geaorge_)
 
+<br/>
+
 1. Αρχικά, βρήκαμε με **View Page Source**, το σχόλιο που περιείχε το blog με τρόπους ασφάλισης ενός server
 
    > --> Link: https://blog.0day.rocks/securing-a-web-hidden-service-89d935ba1c1d
 
+<br/>
 
 2. Από εκεί βρήκαμε ότι μπορούμε να χρησιμοποιήσουμε το **/server-info** για να δούμε πληροφορίες 
    σχετικές με τον server
 
    > --> Link: http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/server-info
     
+<br/>
     
 3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξηπυρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
 
@@ -20,6 +24,7 @@
     >
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
 
+<br/>
 
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
@@ -33,6 +38,7 @@
    Αυτό άμεσα μας δηλώνει ότι κάπου στο server ενδεχομένως να υπάρχει κάποιο php source file, από το οποίο μπορούμε να δούμε το 
    back end της αντίστοιχης σελίδας. [<sup>\[1\]</sup>](part2)
 
+<br/>
 
 5. Μετά, πατώντας το _Submit_ που είχε στη φόρμα, μας ανακατεύθυνε στη σελίδα **/access.php** με μήνυμα λάθους. 
    
@@ -45,7 +51,8 @@
    
    > &emsp;&nbsp;&nbsp; --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/access.phps
    
-   
+<br/>
+
 6. Διαβάζοντας τον κώδικα βρήκαμε πώς να βρούμε το <b>username</b>. Φτιάξαμε το παρακάτω script που το υπολόγιζε και βρήκαμε την τιμή 
    του $user (= 1337 leet 😉)
    
@@ -67,22 +74,72 @@
    
    <h6> <i> Σημείωση: Οποιουσδήποτε 3 χαρακτήρες και να βάλουμε που είναι γράμματα και όχι ψηφία περνάμε τον έλεγχο. </i> </h6>
 
+<br/>
 
-7. Μετά είδαμε ότι το $password χρησιμοποιείται σε μια strcmp(), η οποία μπορεί να παρκαμφθεί εύκολα
-   σύμφωνα με γνωστό πρόβλημα που έχει, που αν της δοθεί NULL ή κενό array σαν 1ο όρισμα, τότε επιστρέφει
-   0, κάτι το οποίο θα καθιστούσε αληθή τη συνθήκη. 
+7. Μετά είδαμε ότι, για να πιστοποιηθεί το $password, χρησιμοποιείται μια **strcmp()**, της οποίας το ένα εκ των δύο ορισμάτων το 
+   ελέγχουμε εμείς. 
    
-   Άρα, έπρεπε με κάποιον τρόπο να περάσουμε κενό array σαν payload στη μεταβλητή $password. Αυτό έγινε 
-   δίνοντας σαν payload το []
-
+   Ακόμα, ο έλεγχος που κάνει η php για το αποτέλεσμα της strcmp(), είναι **loose comparison (!=)** και όχι **strict (!==)**, 
+   που σημαίνει ότι μπορεί να παρακαμφθεί πολύ πιο εύκολα. Ακολούθως παρατίθενται δύο πίνακες αληθείας για τα δύο είδη συγκρίσεων.
+   
+   |  |  |
+   |--|--|
+   | ![alt_text](https://hydrasky.com/wp-content/uploads/2017/05/strict-comparison.png) | ![alt_text](https://hydrasky.com/wp-content/uploads/2017/05/loose-comparison.png) |
+   
+   <!-- <h4> <b> Strict Comparison Mode (=== , !===) </b> </h4> -->
+   
+   <!-- |        | TRUE  | FALSE |   1   |   0   |  -1   |  "1"  |  "0"  | "-1"  | NULL  | array() | "php" |  ""   |
+   |--------|-------|-------|-------|-------|-------|-------|-------|-------|-------|---------|-------|-------|
+   |**TRUE**    | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |**FALSE**   | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |1       | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |0       | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |-1      | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |"1"     | FALSE | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |"0"     | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |"-1"    | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE |  FALSE  | FALSE | FALSE |
+   |**NULL**    | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  FALSE  | FALSE | FALSE |
+   |array() | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  **TRUE**   | FALSE | FALSE |
+   |"php"   | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | **TRUE**  | FALSE |
+   |""      | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | FALSE | **TRUE**  | -->
+   
+   <!-- <h4> <b> Loose Comparison Mode (== , !==) </b> </h4> -->
+   
+   <!-- |        | TRUE  | FALSE |   1   |   0   |  -1   |  "1"  |  "0"  | "-1"  | NULL  | array() | "php" |  ""   |
+   |--------|-------|-------|-------|-------|-------|-------|-------|-------|-------|---------|-------|-------|
+   |**TRUE**    | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE |  FALSE  | **TRUE**  | FALSE |
+   |**FALSE**   | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | **TRUE**  |  TRUE   | FALSE | **TRUE**  |
+   |1       | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |0       | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | **TRUE**  |  FALSE  | **TRUE**  | **TRUE**  |
+   |-1      | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE |  FALSE  | FALSE | FALSE |
+   |"1"     | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |"0"     | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | FALSE |  FALSE  | FALSE | FALSE |
+   |"-1"    | FALSE | FALSE | FALSE | FALSE | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE |  FALSE  | FALSE | FALSE |
+   |**NULL**    | FALSE | **TRUE**  | FALSE | ***TRUE***  | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  TRUE   | FALSE | **TRUE**  |
+   |array() | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  TRUE   | FALSE | FALSE |
+   |"php"   | **TRUE**  | FALSE | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | FALSE |  FALSE  | **TRUE**  | FALSE |
+   |""      | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  FALSE  | FALSE | **TRUE**  | -->
+   
+   Όπως φαίνεται εύκολα από το 2<sup>ο</sup> πίνακα, με βάση το **type juggling** που πραγματοποιεί η php, το **NULL** γίνεται evaluated
+   ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***.
+   
+   Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε να μετατραπεί σε **empty array**, καθώς δίνοντας στην strcmp() σαν 
+   όρισμα τον κενό πίνακα, θα επιστρέψει **NULL**!
+   
+   Έτσι, βρήκαμε ότι η php μετατρέπει τα **POST** και **GET** variables της μορφής **pass\[\]=**, σε **Empty Arrays**. 
+   
+   Συνεπώς, το μόνο που χρειαζόταν για να σπάσουμε τον έλεγχο, ήταν να δώσουμε σαν paylaod: password\[\]
+   
    > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/access.php?user=1337+++&password[]
 
+<br/>
 
 8. Μετά από το /blogposts7589109238 που μας έδωσε η καινούργια σελίδα πήγαμε στην /blogspots και μέσω του indexing 
    που παρέχει ο server βρήκαμε το αρχείο post3.html που περιείχε την πρώτη αναφορά στον Γιώργο και πολλά clues.
 
    > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/blogposts7589109238/blogposts/
 
+<br/>
 
 9. Από εκεί είδαμε αυτό που λέει "Winner Visitor #100013" και θυμηθήκαμε ότι είχαμε δει το Visitor σαν Name στο
    cookie της αρχικής σελίδας (http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/) που μας 
@@ -108,6 +165,7 @@
 
    > --> Link: http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/sekritbackups2444/
 
+<br/>
 
 10. Κατεβάσαμε όλα τα αρχεία και πήραμε το κομμάτι του hash που περιείχε το passphrase.key.truncated
     Ακολουθώντας τις οδηγίες, πήραμε το secret "raccoon" που αναφερόταν στο 2ο .onion και φτιάξαμε ένα script, με το οποίο 
@@ -120,6 +178,7 @@
     passphrase: 2020-02-12 raccoon
     hash      : d1689c23e86421529297f3eb35db2fe261de9cbe19487d923c464d96ca00e138
 
+<br/>
 
 11. Ανοίγωντας το signallog βρίσκουμε την αναφορά στο commit με αριθμό: 2355437c5f30fd2390a314b7d52fb3d24583ef97
     Παρόλο που σίγουρα κάποο ρόλο θα διαδραμάτιζε το firefox.log, δεν το ψάξαμε όπως θα έπρεπε εξ αρχής και αρχίσαμε
@@ -136,6 +195,7 @@
       > \>\> grep github firefox.log \
       >      https://github.com/asn-d6/tor
 
+<br/>
 
 12. Μετά βρίσκοντας το commit αυτό, βρίσκαμε τις τελικές οδηγίες για την εύρεση της τοποθεσίας του Γιώργου. 
     Ακολουθώντας εύκολα πλέον τα 4 βήματα που είχε μέσα κατασκευάσαμε τις συντεταγμένες του και ολοκληρώσαμε
