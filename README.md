@@ -197,17 +197,19 @@
 
       for i in range(1,7):
          for j in range(1,32):
-         passphrase = "2020-0" + str(i) + "-"
-         if j < 10:
-            passphrase = passphrase + "0" + str(j)
-         else:
-            passphrase = passphrase + str(j)
-            passphrase = passphrase + " raccoon"
-            key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
+            passphrase = "2020-0" + str(i) + "-"
+         
+            if j < 10:
+               passphrase = passphrase + "0" + str(j)
+            else:
+               passphrase = passphrase + str(j)
+               passphrase = passphrase + " raccoon"
+               key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
 
-         if "d1689c23e86421529297" in key:
-            print(passphrase)
-            print(key)
+               if "d1689c23e86421529297" in key:
+                  print(passphrase)
+                  print(key)
+                  exit()
     ```
 
     Ελέγχαμε αν το κομμάτι του hash που είχε το _truncated file_ περιέχεται σε αυτό που φτιάξαμε και εύκολα βρίσκουμε
@@ -251,7 +253,7 @@
       lat  = 0.0
       long = 0.0
       for i in range(2,18):
-          lat = lat + int(x[i],16) * mult
+          lat  = lat  + int(x[i],16) * mult
           long = long + int(y[i],16) * mult
           mult = mult / 16
 
