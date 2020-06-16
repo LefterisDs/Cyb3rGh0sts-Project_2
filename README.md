@@ -2,8 +2,6 @@
 
 ## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 1 (_Finding George_)
 
-<br/>
-
 1. Αρχικά, βρήκαμε με **View Page Source**, το σχόλιο που περιείχε το blog με τρόπους ασφάλισης ενός server
 
    > --> Link: https://blog.0day.rocks/securing-a-web-hidden-service-89d935ba1c1d
@@ -19,7 +17,7 @@
     
 3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξηπυρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
 
-    > ![alt text](import screen_1) 
+    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_1.png) 
     >
     >
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
@@ -28,7 +26,7 @@
 
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
-   > ![alt text](import screen_2)
+   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_2.png)
     
    Παρόμοια πληροφορία μπορούμε να πάρουμε και με ακόμα έναν τρόπο. Μέσα στο **/robots.txt** αναγράφεται το εξής
    
@@ -36,7 +34,7 @@
    
    που δηλώνει ότι ο server δε θέλει τα Web Robots που θα διαβάσουν αυτό το αρχείο, να επισκεφθούν σελίδες με κατάληξη **.phps**.
    Αυτό άμεσα μας δηλώνει ότι κάπου στο server ενδεχομένως να υπάρχει κάποιο php source file, από το οποίο μπορούμε να δούμε το 
-   back end της αντίστοιχης σελίδας. [<sup>\[1\]</sup>](part2)
+   back end της αντίστοιχης σελίδας. [<sup>[1]</sup>](#1--httpswwwrobotstxtorgrobotstxthtml)
 
 <br/>
 
@@ -54,7 +52,7 @@
 <br/>
 
 6. Διαβάζοντας τον κώδικα βρήκαμε πώς να βρούμε το <b>username</b>. Φτιάξαμε το παρακάτω script που το υπολόγιζε και βρήκαμε την τιμή 
-   του $user (= 1337 leet 😉)
+   του $user (= 1337) \[leet 😉\]
    
    ```python
    cnt = 0
@@ -69,8 +67,8 @@
 
        i = i + 1
    ```
-   Στη συνέχεια, είδαμε ότι έχει και έναν 2<sup>ο</sup> ελεγχο που πρέπει να παρακάμψουμε. Έπρεπε το μήκος του username να είναι **7**. 
-   Έτσι απλά προσθέσαμε **3** χαρκατήρες + οι οποίοι αγνοούνται και περάσαμε τον πρώτο έλεγχο.
+   Στη συνέχεια, είδαμε ότι έχει και έναν 2<sup>ο</sup> ελεγχο που πρέπει να παρακάμψουμε. Έπρεπε το μήκος του username να είναι ίσο με 
+   **7**. Έτσι απλά προσθέσαμε **3** χαρκατήρες + οι οποίοι αγνοούνται και περάσαμε τον πρώτο έλεγχο.
    
    <h6> <i> Σημείωση: Οποιουσδήποτε 3 χαρακτήρες και να βάλουμε που είναι γράμματα και όχι ψηφία περνάμε τον έλεγχο. </i> </h6>
 
@@ -121,7 +119,7 @@
    |""      | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  FALSE  | FALSE | **TRUE**  | -->
    
    Όπως φαίνεται εύκολα από το 2<sup>ο</sup> πίνακα, με βάση το **type juggling** που πραγματοποιεί η php, το **NULL** γίνεται evaluated
-   ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***. [<sup>\[2\]</sup>](part2)[<sup>\[3\]</sup>](part2)
+   ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***. [<sup>\[2\]</sup>](#2--httpsowasporgwww-pdf-archivephpmagictricks-typejugglingpdfpage33)[<sup>\[3\]</sup>](#3--httpswwwdoylernetsecurity-not-includedbypassing-php-strcmp-abctf2016)
    
    Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε, να μετατραπεί σε **empty array**, καθώς δίνοντας στην strcmp() σαν 
    όρισμα τον κενό πίνακα, επιστρέφει **NULL**!
@@ -147,15 +145,15 @@
    cookie της αρχικής σελίδας (http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/) που μας 
    είχε δοθεί και υποψιαστήκαμε ότι θα χρησιμοποιηθεί κάπου εκεί.
    
-   ![alt text](import screen_3)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_3.png)
     
    Διαγράφοντας το cookie που έχει και κάνοντας reload είδαμε ότι στη θέση του 204 εμφανίζει **"Bad sha256"**.
    Τότε σκεφτήκαμε ότι το value του cookie καθορίζει το τι θα εκτυπωθεί στη θέση του 204.
    
-   ![alt text](import screen_4)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_4.png)
    
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
-   είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](part2)
+   είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](#4--httpsstackoverflowcomquestions6916805why-does-a-base64-encoded-string-have-an-sign-at-the-end)
    
    Κάνοντας decrypt το: **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=** \
    είδαμε ότι παράγει το: **204:fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a**
@@ -181,7 +179,7 @@
    
    Payload: **PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pjo1YzE0MGQzNWRjYjQ2YTYyMmUyY2VkZjVlZjVjYzM2MzhjZGZmZDFjMTE4YzkzMzFmOGM4NDY2OWYwYjc0Nzgz**
 
-   ![alt text](import screen_5)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_5.png)
    
 <br/>
 
@@ -199,17 +197,19 @@
 
       for i in range(1,7):
          for j in range(1,32):
-         passphrase = "2020-0" + str(i) + "-"
-         if j < 10:
-            passphrase = passphrase + "0" + str(j)
-         else:
-            passphrase = passphrase + str(j)
-            passphrase = passphrase + " raccoon"
-            key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
+            passphrase = "2020-0" + str(i) + "-"
+         
+            if j < 10:
+               passphrase = passphrase + "0" + str(j)
+            else:
+               passphrase = passphrase + str(j)
+               passphrase = passphrase + " raccoon"
+               key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
 
-         if "d1689c23e86421529297" in key:
-            print(passphrase)
-            print(key)
+               if "d1689c23e86421529297" in key:
+                  print(passphrase)
+                  print(key)
+                  exit()
     ```
 
     Ελέγχαμε αν το κομμάτι του hash που είχε το _truncated file_ περιέχεται σε αυτό που φτιάξαμε και εύκολα βρίσκουμε
@@ -249,16 +249,16 @@
       x = "0." + str(key[:16])
       y = "0." + str(key[16:32])
 
-      mult  = 1/16
-      dec_x = 0.0
-      dec_y = 0.0
+      mult = 1/16
+      lat  = 0.0
+      long = 0.0
       for i in range(2,18):
-          dec_x = dec_x + int(x[i],16) * mult
-          dec_y = dec_y + int(y[i],16) * mult
+          lat  = lat  + int(x[i],16) * mult
+          long = long + int(y[i],16) * mult
           mult = mult / 16
 
-      print("Latitude : %.30lf"%dec_x)
-      print("Longitude: %.30lf"%dec_y)
+      print("Latitude : %.30lf"%lat)
+      print("Longitude: %.30lf"%long)
     ```
 
     **Location**&nbsp;&nbsp;: Vaux-Saules, 21440, France\
@@ -268,4 +268,29 @@
 ---
 ---
 
-## Part 2
+## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 2 (Missing part for completing Plan X)
+
+1. Αρχικά εγκαταστήσαμε τοπικά τον **pico server** και κατά το compilation εμφανίστηκε ένα warning που μας έδωσε το 1<sup>ο</sup> βήμα 
+   για το attack που πρέπει να κάνουμε.
+   
+   ![alt_text](screen_6)
+   
+   Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
+   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**[<sup>\[5\]</sup>](#5). 
+   
+   ![alt_text](screen_7)
+   
+   Μέσω αυτού, μπορούμε να κάνουμε reveal τα περιεχόμενα ολόκληρου του stack. Έτσι, μπορέσαμε να εκτυπώσουμε τα περιεχόμενα του πίνακα 
+   που δίνεται σαν όρισμα στην **check_auth()** (Line users\[\]), ο οποίος περιέχει το username και το password που έχει φορτωθεί από το 
+   αρχείο **/etc/htpasswd**.
+   
+   
+---
+---
+
+## References
+
+<h5 id="ref_1"><sup>[1]</sup>  https://www.robotstxt.org/robotstxt.html</h5>
+<h5 id="ref_1"><sup>[2]</sup>  https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
+<h5 id="ref_1"><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
+<h5 id="ref_1"><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
