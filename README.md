@@ -275,15 +275,55 @@
    
    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_6.png)
     
-   Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
-   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**[<sup>\[5\]</sup>](#5). 
+<br/>
+
+2. Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
+   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**.[<sup>\[5\]</sup>](#5) [<sup>\[6\]</sup>](#5)
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_7.png)
    
-   Μέσω αυτού, μπορούμε να κάνουμε reveal τα περιεχόμενα ολόκληρου του stack. Έτσι, μπορέσαμε να εκτυπώσουμε τα περιεχόμενα του πίνακα 
+<br/>
+
+3. Μέσω αυτού, μπορούμε να κάνουμε reveal τα περιεχόμενα ολόκληρου του stack. Έτσι, μπορέσαμε να εκτυπώσουμε τα περιεχόμενα του πίνακα 
    που δίνεται σαν όρισμα στην **check_auth()** (Line users\[\]), ο οποίος περιέχει το username και το password που έχει φορτωθεί από το 
-   αρχείο **/etc/htpasswd**.
+   αρχείο **/etc/htpasswd**. 
    
+<br/>
+
+4. Μέσω του ***gdb*** βρήκαμε τα offsets που χρειαζόμαστε για να προσπελάσουμε τα περιεχόμενα της θέσης μνήμης στη stack στην οποία είναι 
+   αποθηκευμένες οι παραπάνω πληροφορίες.
+   
+   Είδαμε ότι τα δύο ορίσματα της **check_auth()** αποθηκεύονται από τις θέσεις: **$ebp + 0x8** (***Line users\[\]***) και **$ebp + 0xc** 
+   (***auth_header***), στο κάτω μέρος του stack frame της συνάρτησης, στις θέσεις: **$ebp - 0x5c** και **$ebp - 0x60** αντιστοίχως.
+   
+   <h6>Σημείωση: Το stack frame έχει αρχικοποιηθεί με <b>0x64 = 100 bytes</b></h6>
+   
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_8.png)
+   
+<br/>
+
+5. Στη συνέχεια βρήκαμε, ότι η μεταβλητή **auth_username**, που δίνεται σαν όρισμα στην printf() την οποία θα εκμεταλλευτούμε, 
+   αποθηκεύεται στη θέση: **$ebp - 0x40**. 
+   
+   Άρα υπολογίζοντας το **offset** μεταξύ αυτών των θέσεων βρήκαμε ότι βάζοντας σαν **payload**: %7$s, θα μας επιστρέψει το περιεχόμενο
+   του πίνακα **users\[\]**.
+   
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_9.png)
+   
+<br/>
+
+6. Το αποτέλεσμα του request μας εμφανίζεται στους Mozilla και Tor Browsers στο prompt που δώσαμε, αλλά και στα **Response Headers**.
+     
+   Έτσι πήραμε το εξής response: **admin:f68762a532c15a8954be87b3d3fc3c31**
+
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_10.png)
+   
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_11.png)
+   
+<br/>
+
+7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**
+
    
 ---
 ---
@@ -294,3 +334,5 @@
 <h5 id="ref_1"><sup>[2]</sup>  https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
 <h5 id="ref_1"><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
 <h5 id="ref_1"><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
+<h5 id="ref_1"><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
+<h5 id="ref_1"><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
