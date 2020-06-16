@@ -23,7 +23,7 @@
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
 
 <br/>
-
+<h5 id="deref1"></h5>
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_2.png)
@@ -34,7 +34,7 @@
    
    που δηλώνει ότι ο server δε θέλει τα Web Robots που θα διαβάσουν αυτό το αρχείο, να επισκεφθούν σελίδες με κατάληξη **.phps**.
    Αυτό άμεσα μας δηλώνει ότι κάπου στο server ενδεχομένως να υπάρχει κάποιο php source file, από το οποίο μπορούμε να δούμε το 
-   back end της αντίστοιχης σελίδας. <h5 id="deref_1"><a href="#1"><sup>[1]</sup></a></h5>
+   back end της αντίστοιχης σελίδας. [<sup>[1]</sup>](#1)
 
 <br/>
 
