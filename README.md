@@ -157,7 +157,7 @@
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
    είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](part2)
    
-   Κάνοντας decrypt το: **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=**
+   Κάνοντας decrypt το: **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=** \
    είδαμε ότι παράγει το: **204:fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a**
    
    Μετά κάναμε hashing του 204 με το sha-256 και είδαμε ότι παράγει το 2ο κομμάτι του decrypted base64.
@@ -172,7 +172,7 @@
    > --> Link: http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/sekritbackups2444/
    
    
-   #### Bonus
+   #### Bonus!
    
    Ακουλουθώντας την παραπάνω διαδικασία μπορέσαμε και κάναμε **XSS attack** στο site.
    
@@ -221,13 +221,13 @@
 
 <br/>
 
-11. Ανοίγωντας το signallog βρίσκουμε την αναφορά στο commit με αριθμό: 2355437c5f30fd2390a314b7d52fb3d24583ef97
-    Παρόλο που σίγουρα κάποο ρόλο θα διαδραμάτιζε το firefox.log, δεν το ψάξαμε όπως θα έπρεπε εξ αρχής και αρχίσαμε
-    να ψάχνουμε manually τα repos του καθηγητή και του βοηθού μέχρι που βρήκαμε το αντίστοιχο commit με hash αυτό
-    που βρήκαμε από το signal.log.
-
-    Eν τέλει, προφανώς και υπήρχε και στο αρχείο firefox.log, που με ένα search github έβγαζε το λινκ απευθείας ή μέσω
-    terminal εκτελώντας: sort firefox.log | uniq ή grep github firefox.log, εμφάνιζε το link του github.
+11. Ανοίγωντας το **signal.log** βρίσκουμε την αναφορά στο commit με αριθμό: **2355437c5f30fd2390a314b7d52fb3d24583ef97**
+    
+    Παρόλο που σίγουρα κάποιο ρόλο θα διαδραμάτιζε και το **firefox.log**, αρχικά αρχίσαμε να ψάχνουμε τα repos των καθγητών και των 
+    βοηθών μέχρι που βρήκαμε το αντίστοιχο commit με το ίδιο hash.
+    
+    Eν τέλει, προφανώς και υπήρχε και στο αρχείο **firefox.log**, που με ένα `search github` έβγαζε το λινκ απευθείας ή μέσω
+    terminal εκτελώντας: `sort firefox.log | uniq` ή `grep github firefox.log`, εμφάνιζε το link του github.
 
       > \>\> sort firefox.log | uniq \
       >      https://en.wikipedia.org/wiki/The_Conversation \
@@ -238,16 +238,34 @@
 
 <br/>
 
-12. Μετά βρίσκοντας το commit αυτό, βρίσκαμε τις τελικές οδηγίες για την εύρεση της τοποθεσίας του Γιώργου. 
-    Ακολουθώντας εύκολα πλέον τα 4 βήματα που είχε μέσα κατασκευάσαμε τις συντεταγμένες του και ολοκληρώσαμε
-    το ερώτημα!
+12. Τέλος, βρίσκοντας το commit αυτό, βρίσκαμε τις τελικές οδηγίες για την εύρεση της τοποθεσίας του Γιώργου. 
+    Ακολουθώντας εύκολα πλέον τα 4 βήματα που είχε μέσα κατασκευάσαμε με ένα script τις συντεταγμένες του και ολοκληρώσαμε το ερώτημα!
+    
+    ```python
+      from hashlib import sha256
 
-    > Location : Vaux-Saules, 21440, France\
-    > Latitude : 47.47298416481722560089\
-    > Longitude: 4.7991375472458345437
+      key = sha256(b"cybergh0sts").hexdigest()
 
+      x = "0." + str(key[:16])
+      y = "0." + str(key[16:32])
 
-- - - - - - - - - - - - - - - - - ----------------------------------------- - - - - - - - - - - - - - - - - -
+      mult  = 1/16
+      dec_x = 0.0
+      dec_y = 0.0
+      for i in range(2,18):
+          dec_x = dec_x + int(x[i],16) * mult
+          dec_y = dec_y + int(y[i],16) * mult
+          mult = mult / 16
 
+      print("Latitude : %.30lf"%dec_x)
+      print("Longitude: %.30lf"%dec_y)
+    ```
+
+    **Location**&nbsp;&nbsp;: Vaux-Saules, 21440, France\
+    **Latitude**&nbsp;&nbsp;&nbsp;: 47.47298416481722560089\
+    **Longitude**: &nbsp;&nbsp;4.7991375472458345437
+
+---
+---
 
 ## Part 2
