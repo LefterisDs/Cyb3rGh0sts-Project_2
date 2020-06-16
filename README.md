@@ -19,7 +19,7 @@
     
 3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξηπυρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
 
-    > ![alt text](import screen) 
+    > ![alt text](import screen_1) 
     >
     >
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
@@ -28,7 +28,7 @@
 
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
-   > ![alt text](import screen)
+   > ![alt text](import screen_2)
     
    Παρόμοια πληροφορία μπορούμε να πάρουμε και με ακόμα έναν τρόπο. Μέσα στο **/robots.txt** αναγράφεται το εξής
    
@@ -121,39 +121,44 @@
    |""      | FALSE | **TRUE**  | FALSE | **TRUE**  | FALSE | FALSE | FALSE | FALSE | **TRUE**  |  FALSE  | FALSE | **TRUE**  | -->
    
    Όπως φαίνεται εύκολα από το 2<sup>ο</sup> πίνακα, με βάση το **type juggling** που πραγματοποιεί η php, το **NULL** γίνεται evaluated
-   ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***.
+   ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***. [<sup>\[2\]</sup>](part2)[<sup>\[3\]</sup>](part2)
    
-   Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε να μετατραπεί σε **empty array**, καθώς δίνοντας στην strcmp() σαν 
-   όρισμα τον κενό πίνακα, θα επιστρέψει **NULL**!
+   Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε, να μετατραπεί σε **empty array**, καθώς δίνοντας στην strcmp() σαν 
+   όρισμα τον κενό πίνακα, επιστρέφει **NULL**!
    
    Έτσι, βρήκαμε ότι η php μετατρέπει τα **POST** και **GET** variables της μορφής **pass\[\]=**, σε **Empty Arrays**. 
    
-   Συνεπώς, το μόνο που χρειαζόταν για να σπάσουμε τον έλεγχο, ήταν να δώσουμε σαν paylaod: password\[\]
+   Συνεπώς, το μόνο που χρειαζόταν για να σπάσουμε τον έλεγχο, ήταν να δώσουμε σαν paylaod: **password\[\]**
+   
+   Άρα, το ολοκληρωμένο payload που χρειαζόμαστε για να περάσουμε τους ελέγχους είναι: **user=1337+++&password\[\]**
    
    > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/access.php?user=1337+++&password[]
 
 <br/>
 
-8. Μετά από το /blogposts7589109238 που μας έδωσε η καινούργια σελίδα πήγαμε στην /blogspots και μέσω του indexing 
-   που παρέχει ο server βρήκαμε το αρχείο post3.html που περιείχε την πρώτη αναφορά στον Γιώργο και πολλά clues.
+8. Μετά από το **/blogposts7589109238** που μας έδωσε η καινούργια σελίδα, πήγαμε στην **/blogspots** και μέσω του indexing 
+   που δεν είχε ασφαλίστει, βρήκαμε το αρχείο **post3.html** που περιείχε την πρώτη αναφορά στον Γιώργο και διάφορα άλλα στοιχεία.
 
    > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/blogposts7589109238/blogposts/
 
 <br/>
 
-9. Από εκεί είδαμε αυτό που λέει "Winner Visitor #100013" και θυμηθήκαμε ότι είχαμε δει το Visitor σαν Name στο
+9. Από εκεί είδαμε να αναφέρεται το εξής: **"Winner Visitor #100013"** και θυμηθήκαμε ότι είχαμε δει το **Visitor** σαν Name στο
    cookie της αρχικής σελίδας (http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/) που μας 
    είχε δοθεί και υποψιαστήκαμε ότι θα χρησιμοποιηθεί κάπου εκεί.
+   
+   ![alt text](import screen_3)
     
-   Διαγράφοντας το cookie που έχει και κάνοντας reload είδαμε ότι στη θέση του 204 εμφανίζει "Bad sha256".
-   Άρα σκεφτήκαμε ότι το value του cookie έχει άμεση συσχέτιση με τον αριθμό 204 που αναφερόταν προηγουμένως
-   ως "Visitor Number" σε συνδυασμό με το sha256.
+   Διαγράφοντας το cookie που έχει και κάνοντας reload είδαμε ότι στη θέση του 204 εμφανίζει **"Bad sha256"**.
+   Τότε σκεφτήκαμε ότι το value του cookie καθορίζει το τι θα εκτυπωθεί στη θέση του 204.
+   
+   ![alt text](import screen_4)
    
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
-   είναι format που συμφωνεί με την κωδικοποίηση base64.
+   είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](part2)
    
-   Κάνοντας decrypt το 'MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE='
-   είδαμε ότι παράγει το '204:fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a7'.
+   Κάνοντας decrypt το: &nbsp;&nbsp; **MjA0OmZjNTZkYmM2ZDQ2NTJiMzE1Yjg2YjcxYzhkNjg4YzFjY2RlYTljNWYxZmQwNzc2M2QyNjU5ZmRlMmUyZmM0OWE=**
+   είδαμε ότι παράγει το: **204:fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a**
    
    Μετά κάναμε hashing του 204 με το sha-256 και είδαμε ότι παράγει το 2ο κομμάτι του decrypted base64.
 
