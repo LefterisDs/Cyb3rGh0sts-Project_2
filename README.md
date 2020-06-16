@@ -273,12 +273,12 @@
 1. Αρχικά εγκαταστήσαμε τοπικά τον **pico server** και κατά το compilation εμφανίστηκε ένα warning που μας έδωσε το 1<sup>ο</sup> βήμα 
    για το attack που πρέπει να κάνουμε.
    
-   ![alt_text](screen_6)
-   
+   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_6.png)
+    
    Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
    γίνει σε μια τέτοια printf(), είναι το **Format String Attack**[<sup>\[5\]</sup>](#5). 
    
-   ![alt_text](screen_7)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_7.png)
    
    Μέσω αυτού, μπορούμε να κάνουμε reveal τα περιεχόμενα ολόκληρου του stack. Έτσι, μπορέσαμε να εκτυπώσουμε τα περιεχόμενα του πίνακα 
    που δίνεται σαν όρισμα στην **check_auth()** (Line users\[\]), ο οποίος περιέχει το username και το password που έχει φορτωθεί από το 
