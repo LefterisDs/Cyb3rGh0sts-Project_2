@@ -276,4 +276,7 @@
 
 ## References
 
-<h5 id="ref_1"><a href="#-part-1-finding-george"><sup>[1]</sup></a></h5>
+<h5 id="ref_1"><sup>[1]</sup></h5>
+<h5 id="ref_1"><sup>[2]</sup></h5>
+<h5 id="ref_1"><sup>[3]</sup></h5>
+<h5 id="ref_1"><sup>[4]</sup></h5>
