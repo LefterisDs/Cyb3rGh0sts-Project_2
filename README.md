@@ -15,9 +15,9 @@
     
 <br/>
     
-3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξηπυρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
+3. Έτσι, μέσα στις πληροφορίες αυτές, βρήκαμε ότι στο server εξυπηρετούνται δύο ιστοσελίδες και πήραμε το 2<sup>ο</sup> .onion link
 
-    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_1.png) 
+    > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/1-Served_Links.png) 
     >
     >
     > --> Link: http://jt4grrjwzyz3pjkylwfau5xnjaj23vxmhskqaeyfhrfylelw4hvxcuyd.onion/
@@ -26,7 +26,7 @@
 
 4. Μετά από το **/server-info** ξανά, του 2<sup>ου</sup> onion, βρήκαμε ότι έχουμε πρόσβαση σε όλα τα **.phps** files
 
-   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_2.png)
+   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/2-Extensions_Granted_Access.png)
     
    Παρόμοια πληροφορία μπορούμε να πάρουμε και με ακόμα έναν τρόπο. Μέσα στο **/robots.txt** αναγράφεται το εξής
    
@@ -145,12 +145,12 @@
    cookie της αρχικής σελίδας (http://2fvhjskjet3n5syd6yfg5lhvwcs62bojmthr35ko5bllr3iqdb4ctdyd.onion/) που μας 
    είχε δοθεί και υποψιαστήκαμε ότι θα χρησιμοποιηθεί κάπου εκεί.
    
-   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_3.png)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/3-Cookie_Name.png)
     
    Διαγράφοντας το cookie που έχει και κάνοντας reload είδαμε ότι στη θέση του 204 εμφανίζει **"Bad sha256"**.
    Τότε σκεφτήκαμε ότι το value του cookie καθορίζει το τι θα εκτυπωθεί στη θέση του 204.
    
-   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_4.png)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/4-Cookie_BadSHA256.png)
    
    Είδαμε ότι το value του cookie τελειώνει σε %3D που είναι το (=) σε URL encoded μορφή και βρήκαμε ότι αυτό
    είναι format που συμφωνεί με την κωδικοποίηση base64. [<sup>\[4\]</sup>](#4--httpsstackoverflowcomquestions6916805why-does-a-base64-encoded-string-have-an-sign-at-the-end)
@@ -179,7 +179,7 @@
    
    Payload: **PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pjo1YzE0MGQzNWRjYjQ2YTYyMmUyY2VkZjVlZjVjYzM2MzhjZGZmZDFjMTE4YzkzMzFmOGM4NDY2OWYwYjc0Nzgz**
 
-   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_5.png)
+   ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/5-Cookie_XSS.png)
    
 <br/>
 
@@ -273,14 +273,14 @@
 1. Αρχικά εγκαταστήσαμε τοπικά τον **pico server** και κατά το compilation εμφανίστηκε ένα warning που μας έδωσε το 1<sup>ο</sup> βήμα 
    για το attack που πρέπει να κάνουμε.
    
-   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_6.png)
+   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/6-FSA_Warning.png)
     
 <br/>
 
 2. Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
    γίνει σε μια τέτοια printf(), είναι το **Format String Attack**. [<sup>\[5\]</sup>](#5--httpsowasporgwww-communityattacksformat_string_attack)[<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_7.png)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/7-Format_String_attack.png)
    
 <br/>
 
@@ -298,7 +298,7 @@
    
    <h6>Σημείωση: Το stack frame έχει αρχικοποιηθεί με <b>0x64 = 100 bytes</b></h6>
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_8.png)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/8-Arguments_Copy.png)
    
 <br/>
 
@@ -308,7 +308,7 @@
    Άρα υπολογίζοντας το **offset** μεταξύ αυτών των θέσεων βρήκαμε ότι βάζοντας σαν payload: **%7$s**, θα μας επιστρέψει το περιεχόμενο
    του πίνακα **users\[\]**.
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_9.png)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/9-FSA_Arg_Position.png)
    
 <br/>
 
@@ -316,26 +316,39 @@
      
    Έτσι πήραμε το εξής response: **admin:f68762a532c15a8954be87b3d3fc3c31**
 
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_10.png)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/10-Prompt_FSA_Results.png)
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_11.png)
-   
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/11-Headers_FSA_Results.png)
+
 <br/>
 
 7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**.
    
    Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληοροφρίες για το ***Missing Part for Plan X***.
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/screen_12.png)
+   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/12-Plan_X.png)
 
 ---
 ---
+
+## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 3 (Preliminary Results of Plan Y)
+
+1. Αρχικά και εδώ, ξεκινήσαμε δοκιμάζοντας να κάνουμε κάποιο **SQL Injection** για να παρακάμψουμε τον έλεγχο.
+
+<br/>
+
+2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα και σε συνδυασμό με το προηγούμενο βήμα, είδαμε ότι πρέπει να κάνουμε **Buffer Overflow**, 
+   καθώς υπάρχει ένας πίνακας ονόματι ***admin_pwd*** που έχει το ίδιο όνομα με το όνομα του prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
+   
+   |||
+   | ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png) | ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png) |
+   
 
 ## References
 
-<h5 id="ref_1"><sup>[1]</sup>  https://www.robotstxt.org/robotstxt.html</h5>
-<h5 id="ref_1"><sup>[2]</sup>  https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
-<h5 id="ref_1"><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
-<h5 id="ref_1"><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
-<h5 id="ref_1"><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
+<h5><sup>[1]</sup>  https://www.robotstxt.org/robotstxt.html</h5>
+<h5><sup>[2]</sup>  https://owasp.org/www-pdf-archive/PHPMagicTricks-TypeJuggling.pdf#page=33</h5>
+<h5><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
+<h5><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
+<h5><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
 <h5 id="ref_1"><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
