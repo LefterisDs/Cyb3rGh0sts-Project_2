@@ -334,15 +334,23 @@
 ## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 3 (Preliminary Results of Plan Y)
 
 1. Αρχικά και εδώ, ξεκινήσαμε δοκιμάζοντας να κάνουμε κάποιο **SQL Injection** για να παρακάμψουμε τον έλεγχο.
-
 <br/>
 
-2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα και σε συνδυασμό με το προηγούμενο βήμα, είδαμε ότι πρέπει να κάνουμε **Buffer Overflow**, 
-   καθώς υπάρχει ένας πίνακας ονόματι ***admin_pwd*** που έχει το ίδιο όνομα με το όνομα του prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
+2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα, είδαμε πως υπάρχει ένας πίνακας ***Line admin_pwd[1]*** που έχει το ίδιο όνομα με το όνομα 
+   του prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
    
-   |||
-   | ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png) | ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png) |
+   Βλέποντας και το περιεχόμενο της συνάρτησης **post_param()** που καλείται αμέσως μετά, είδαμε ότι γίνεται ένα ***memcpy*** με μέγεθος όσο
+   το εκάστοτε payload και παράλληλα μετατρέπονται τα **&**,**=** σε **\0** χαρακτήρες. Έτσι, καταλάβαμε ότι πρέπει να κάνουμε **Buffer Overflow**!
    
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png) ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png)
+<br/>
+
+3. Πρώτα έπρεπε να βρούμε τις μεθόδους ασφαλείας που χρησιμοποιεί ο server για να ξέρουμε πώς θα πρέπει να κάνουμε το attack. Έτσι, μέσω του 
+   gdb είδαμε ότι χρησιμοποιούνται **canaries** για να διασφαλιστούν οι συναρτήσεις που περιέχουν πίνακες και μάλιστα χρησιμοποιούνται ***terminator canaries*** 
+   που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας strcpy(). 
+
+
+4. Οι πρώτες σκέψεις, ήταν με το BOF να κάνουμε override το περιεχόμενο του πίνακα **admin_pwd[1]** και να γράψουμε μέσα 
 
 ## References
 
@@ -351,4 +359,4 @@
 <h5><sup>[3]</sup>  https://www.doyler.net/security-not-included/bypassing-php-strcmp-abctf2016</h5>
 <h5><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
 <h5><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
-<h5 id="ref_1"><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
+<h5><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
