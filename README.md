@@ -336,21 +336,65 @@
 1. Αρχικά και εδώ, ξεκινήσαμε δοκιμάζοντας να κάνουμε κάποιο **SQL Injection** για να παρακάμψουμε τον έλεγχο.
 <br/>
 
-2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα, είδαμε πως υπάρχει ένας πίνακας ***Line admin_pwd[1]*** που έχει το ίδιο όνομα με το όνομα 
-   του prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
+2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα, είδαμε πως υπάρχει ένας πίνακας **admin_pwd[1]** που έχει το ίδιο όνομα με το όνομα του 
+   prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
    
    Βλέποντας και το περιεχόμενο της συνάρτησης **post_param()** που καλείται αμέσως μετά, είδαμε ότι γίνεται ένα ***memcpy*** με μέγεθος όσο
    το εκάστοτε payload και παράλληλα μετατρέπονται τα **&**,**=** σε **\0** χαρακτήρες. Έτσι, καταλάβαμε ότι πρέπει να κάνουμε **Buffer Overflow**!
    
-   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png) ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png)
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png)|
+   |-|-|
 <br/>
 
-3. Πρώτα έπρεπε να βρούμε τις μεθόδους ασφαλείας που χρησιμοποιεί ο server για να ξέρουμε πώς θα πρέπει να κάνουμε το attack. Έτσι, μέσω του 
-   gdb είδαμε ότι χρησιμοποιούνται **canaries** για να διασφαλιστούν οι συναρτήσεις που περιέχουν πίνακες και μάλιστα χρησιμοποιούνται ***terminator canaries*** 
-   που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας strcpy(). 
+3. Πρώτα έπρεπε να βρούμε τις μεθόδους ασφαλείας που χρησιμοποιεί ο server, πληροφορίες σχετικές με το πώς έγινε το build και πληροφορίες για
+   το σύστημα στο οποίο έγινε. 
+   
+   Διαβάζοντας το Makefile είδαμε ότι δε γίνεται κάποια απενεργοποίηση των **stack-protectors (canaries)**, του **ASLR** και ενεργοποίηση του 
+   **Executable Stack** οπότε καταλάβαμε ότι θα ήταν ενεργοποιημένα.
+   
+   - Mέσω του gdb επιβεβαιώσαμε ότι χρησιμοποιούνται **canaries** για να διασφαλιστούν οι συναρτήσεις που περιέχουν πίνακες και μάλιστα 
+     χρησιμοποιούνται ***Random Terminator Canaries*** που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας strcpy().
+   
+   - Κάνοντας 2-3 φορές το **Format String Attack (FSA)** που περιγράφηκε στο Part_2, επιβεβαιώσαμε και την ύπαρξη του **ASLR**.
+   
+   - Στη δελίδα που μπήκαμε περνόντας το Βήμα 2, περιέχονταν πληροφορίες σχετικές με το σύστημα στο οποίο έγινε το build του pico server, της 
+     έκδοσης του gcc που χρησιμοποιήθηκε και το όνομα του μηχανήματος στο οποίο έγινε.
+     
+     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/15-Pico_Server_Build_Info.png)
+     
+   - Πηγαίνοντας στο μηχάνημα **linux02**, μέσω της εντολής `lscpu` βρήκαμε ότι πρόκειται για ***Little Endian*** σύστημα.
+   
+     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/16-System_Endian.png)
+     
+<br/>
+
+4. Οι πρώτες σκέψεις, ήταν με το BOF να κάνουμε override το περιεχόμενο του πίνακα **admin_pwd[1]** και να γράψουμε μέσα έναν δικό μας κωδικό
+   τον οποίο και θα επέστρεφε η post_param() για να καταφέρουμε να περάσουμε τον έλεγχο που έχει στη συνέχεια.
+   
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/17-Password_Checking.png)
+<br/>
+
+5. Έπειτα είδαμε ότι μπορούμε να κάνουμε κάτι πιο εύκολο στην υλοποίηση, όπως το να αλλάξουμε τη διεύθυνση επιστροφής της post_param() και να 
+   την πάμε στο σημείο που εμείς θέλουμε. Εν προκειμένω, να καλέσουμε την **serve_ultimate()** ώστε να μας στείλει το _ultimate.html_.
+<br/>
+
+6. Στην αρχή προσπαθήσαμε να βρούμε τρόπο να παρακάμψουμε τα ***canaries***. \
+   Σκεφτήκαμε ότι στην έκδοση gcc-5.4 υπάρχουν γνωστά vulnerabilities που θα μπορούσαμε να εκμεταλλευτούμε. [<sup>\[7\]</sup>](#7--httpswwwcvedetailscomvulnerability-listvendor_id-72product_id-960version_id-219995gnu-gcc-54html) \
+   Βρήκαμε ότι όντως υπάρχει ένα security vulnerability το οποίο θα μας επέτρεπε να περάσουμε τον έλεγχο του stack guard canary.
+   
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/18-GCC_5.4_Security_Vulnerability.png)
+<br/>
+
+7. Στη συνέχεια σκεφτήκαμε πως εφόσον βρισκόμαστε σε **x32** αρχιτεκτονική τότε θα μπορούσαμε να κάνουμε _brute force_ ώστε να βρούμε την τιμή 
+   του και να την επαναφέρουμε μέσω του BOF για να μην προκύψει ***stack smashing***, κάτι που ενισχύεται δεδομένου ότι έχουμε να κάνουμε με 
+   **Termiantor Canaries** (eg. 0xYYYYYY**00**), που σημαίνει ότι μειώνεται ακόμα περισσότερο ο χώρος αναζήτησης του _brute forcing_ [<sup>\[8\]</sup>](#8--httpsctf101orgbinary-exploitationstack-canariesbruteforcing-a-stack-canary)
+<br/>
 
 
-4. Οι πρώτες σκέψεις, ήταν με το BOF να κάνουμε override το περιεχόμενο του πίνακα **admin_pwd[1]** και να γράψουμε μέσα 
+8. Ωστόσο, υπάρχουν και άλλοι πιο εύκολοι τρόποι για να επιτευχθεί το παρόν attack και γι'αυτό συνεχίσαμε χωρίς να εκμεταλλευτούμε αυτό το κενό.
+   Μέσω του gdb και μετά από σχετική αναζήτηση, βρήκαμε ότι τα συγκεκριμένα canaries είναι **Random Terminator Canaries** και έτσι καταλάβαμε το
+   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)
+   
 
 ## References
 
@@ -360,3 +404,6 @@
 <h5><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
 <h5><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
 <h5><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
+<h5><sup>[7]</sup>  https://www.cvedetails.com/vulnerability-list/vendor_id-72/product_id-960/version_id-219995/GNU-GCC-5.4.html</h5>
+<h5><sup>[8]</sup>  https://ctf101.org/binary-exploitation/stack-canaries/#bruteforcing-a-stack-canary</h5>
+<h5><sup>[9]</sup>  https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries</h5>
