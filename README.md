@@ -77,7 +77,7 @@
 7. Μετά είδαμε ότι, για να πιστοποιηθεί το $password, χρησιμοποιείται μια **strcmp()**, της οποίας το ένα εκ των δύο ορισμάτων το 
    ελέγχουμε εμείς. 
    
-   Ακόμα, ο έλεγχος που κάνει η php για το αποτέλεσμα της strcmp(), είναι **loose comparison (!=)** και όχι **strict (!==)**, 
+   Ακόμα, ο έλεγχος που κάνει η php για το αποτέλεσμα της `strcmp()`, είναι **loose comparison (!=)** και όχι **strict (!==)**, 
    που σημαίνει ότι μπορεί να παρακαμφθεί πολύ πιο εύκολα. Ακολούθως παρατίθενται δύο πίνακες αληθείας για τα δύο είδη συγκρίσεων.
    
    |  |  |
@@ -121,7 +121,7 @@
    Όπως φαίνεται εύκολα από το 2<sup>ο</sup> πίνακα, με βάση το **type juggling** που πραγματοποιεί η php, το **NULL** γίνεται evaluated
    ως 0 και έτσι η σύγκριση **NULL == 0** επιστρέφει ***TRUE***. [<sup>\[2\]</sup>](#2--httpsowasporgwww-pdf-archivephpmagictricks-typejugglingpdfpage33)[<sup>\[3\]</sup>](#3--httpswwwdoylernetsecurity-not-includedbypassing-php-strcmp-abctf2016)
    
-   Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε, να μετατραπεί σε **empty array**, καθώς δίνοντας στην strcmp() σαν 
+   Άρα έπρεπε να βρούμε τρόπο να κάνουμε το όρισμα που ελέγχουμε, να μετατραπεί σε **empty array**, καθώς δίνοντας στην `strcmp()` σαν 
    όρισμα τον κενό πίνακα, επιστρέφει **NULL**!
    
    Έτσι, βρήκαμε ότι η php μετατρέπει τα **POST** και **GET** variables της μορφής **pass\[\]=**, σε **Empty Arrays**. 
@@ -278,14 +278,14 @@
 <br/>
 
 2. Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
-   γίνει σε μια τέτοια printf(), είναι το **Format String Attack**. [<sup>\[5\]</sup>](#5--httpsowasporgwww-communityattacksformat_string_attack)[<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
+   γίνει σε μια τέτοια ***printf***, είναι το **Format String Attack**. [<sup>\[5\]</sup>](#5--httpsowasporgwww-communityattacksformat_string_attack)[<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/7-Format_String_attack.png)
    
 <br/>
 
 3. Μέσω αυτού, μπορούμε να κάνουμε reveal τα περιεχόμενα ολόκληρου του stack. Έτσι, μπορέσαμε να εκτυπώσουμε τα περιεχόμενα του πίνακα 
-   που δίνεται σαν όρισμα στην **check_auth()** (Line users\[\]), ο οποίος περιέχει το username και το password που έχει φορτωθεί από το 
+   που δίνεται σαν όρισμα στην `check_auth()` (Line users\[\]), ο οποίος περιέχει το username και το password που έχει φορτωθεί από το 
    αρχείο **/etc/htpasswd**. 
    
 <br/>
@@ -293,7 +293,7 @@
 4. Μέσω του ***gdb*** βρήκαμε τα offsets που χρειαζόμαστε για να προσπελάσουμε τα περιεχόμενα της θέσης μνήμης στη stack στην οποία είναι 
    αποθηκευμένες οι παραπάνω πληροφορίες.
    
-   Είδαμε ότι τα δύο ορίσματα της **check_auth()** αποθηκεύονται από τις θέσεις: **$ebp + 0x8** (***Line users\[\]***) και **$ebp + 0xc** 
+   Είδαμε ότι τα δύο ορίσματα της `check_auth()` αποθηκεύονται από τις θέσεις: **$ebp + 0x8** (***Line users\[\]***) και **$ebp + 0xc** 
    (***auth_header***), στο κάτω μέρος του stack frame της συνάρτησης, στις θέσεις: **$ebp - 0x5c** και **$ebp - 0x60** αντιστοίχως.
    
    <h6>Σημείωση: Το stack frame έχει αρχικοποιηθεί με <b>0x64 = 100 bytes</b></h6>
@@ -302,7 +302,7 @@
    
 <br/>
 
-5. Στη συνέχεια βρήκαμε, ότι η μεταβλητή **auth_username**, που δίνεται σαν όρισμα στην printf() την οποία θα εκμεταλλευτούμε, 
+5. Στη συνέχεια βρήκαμε, ότι η μεταβλητή **auth_username**, που δίνεται σαν όρισμα στην `printf()` την οποία θα εκμεταλλευτούμε, 
    αποθηκεύεται στη θέση: **$ebp - 0x40**. 
    
    Άρα υπολογίζοντας το **offset** μεταξύ αυτών των θέσεων βρήκαμε ότι βάζοντας σαν payload: **%7$s**, θα μας επιστρέψει το περιεχόμενο
@@ -339,7 +339,7 @@
 2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα, είδαμε πως υπάρχει ένας πίνακας **admin_pwd[1]** που έχει το ίδιο όνομα με το όνομα του 
    prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
    
-   Βλέποντας και το περιεχόμενο της συνάρτησης **post_param()** που καλείται αμέσως μετά, είδαμε ότι γίνεται ένα ***memcpy*** με μέγεθος όσο
+   Βλέποντας και το περιεχόμενο της συνάρτησης `post_param()` που καλείται αμέσως μετά, είδαμε ότι γίνεται ένα ***memcpy*** με μέγεθος όσο
    το εκάστοτε payload και παράλληλα μετατρέπονται τα **&**,**=** σε **\0** χαρακτήρες. Έτσι, καταλάβαμε ότι πρέπει να κάνουμε **Buffer Overflow**!
    
    |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/13-Prompt_Name.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/14-Pico_SameName_Array.png)|
@@ -353,14 +353,15 @@
    **Executable Stack** οπότε καταλάβαμε ότι θα ήταν ενεργοποιημένα.
    
    - Mέσω του gdb επιβεβαιώσαμε ότι χρησιμοποιούνται **canaries** για να διασφαλιστούν οι συναρτήσεις που περιέχουν πίνακες και μάλιστα 
-     χρησιμοποιούνται ***Random Terminator Canaries*** που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας strcpy().
+     χρησιμοποιούνται ***Random Terminator Canaries*** που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας `strcpy()`.
    
    - Κάνοντας 2-3 φορές το **Format String Attack (FSA)** που περιγράφηκε στο Part_2, επιβεβαιώσαμε και την ύπαρξη του **ASLR**.
    
    - Στη δελίδα που μπήκαμε περνόντας το Βήμα 2, περιέχονταν πληροφορίες σχετικές με το σύστημα στο οποίο έγινε το build του pico server, της 
      έκδοσης του gcc που χρησιμοποιήθηκε και το όνομα του μηχανήματος στο οποίο έγινε.
      
-     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/15-Pico_Server_Build_Info.png)
+     |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/15-Pico_Server_Build_Info.png)|
+     |-|
      
    - Πηγαίνοντας στο μηχάνημα **linux02**, μέσω της εντολής `lscpu` βρήκαμε ότι πρόκειται για ***Little Endian*** σύστημα.
    
@@ -369,31 +370,59 @@
 <br/>
 
 4. Οι πρώτες σκέψεις, ήταν με το BOF να κάνουμε override το περιεχόμενο του πίνακα **admin_pwd[1]** και να γράψουμε μέσα έναν δικό μας κωδικό
-   τον οποίο και θα επέστρεφε η post_param() για να καταφέρουμε να περάσουμε τον έλεγχο που έχει στη συνέχεια.
+   τον οποίο και θα επέστρεφε η `post_param()` για να καταφέρουμε να περάσουμε τον έλεγχο που έχει στη συνέχεια.
    
    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/17-Password_Checking.png)
 <br/>
 
-5. Έπειτα είδαμε ότι μπορούμε να κάνουμε κάτι πιο εύκολο στην υλοποίηση, όπως το να αλλάξουμε τη διεύθυνση επιστροφής της post_param() και να 
-   την πάμε στο σημείο που εμείς θέλουμε. Εν προκειμένω, να καλέσουμε την **serve_ultimate()** ώστε να μας στείλει το _ultimate.html_.
+5. Έπειτα είδαμε ότι μπορούμε να κάνουμε κάτι πιο εύκολο στην υλοποίηση, όπως το να αλλάξουμε τη διεύθυνση επιστροφής της `post_param()` και να 
+   την πάμε στο σημείο που εμείς θέλουμε. Εν προκειμένω, να καλέσουμε την **`serve_ultimate()`** ώστε να μας στείλει το _ultimate.html_.
 <br/>
 
 6. Στην αρχή προσπαθήσαμε να βρούμε τρόπο να παρακάμψουμε τα ***canaries***. \
    Σκεφτήκαμε ότι στην έκδοση gcc-5.4 υπάρχουν γνωστά vulnerabilities που θα μπορούσαμε να εκμεταλλευτούμε. [<sup>\[7\]</sup>](#7--httpswwwcvedetailscomvulnerability-listvendor_id-72product_id-960version_id-219995gnu-gcc-54html) \
    Βρήκαμε ότι όντως υπάρχει ένα security vulnerability το οποίο θα μας επέτρεπε να περάσουμε τον έλεγχο του stack guard canary.
    
-   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/18-GCC_5.4_Security_Vulnerability.png)
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/18-GCC_5.4_Security_Vulnerability.png)|
+   |-|
 <br/>
 
 7. Στη συνέχεια σκεφτήκαμε πως εφόσον βρισκόμαστε σε **x32** αρχιτεκτονική τότε θα μπορούσαμε να κάνουμε _brute force_ ώστε να βρούμε την τιμή 
    του και να την επαναφέρουμε μέσω του BOF για να μην προκύψει ***stack smashing***, κάτι που ενισχύεται δεδομένου ότι έχουμε να κάνουμε με 
    **Termiantor Canaries** (eg. 0xYYYYYY**00**), που σημαίνει ότι μειώνεται ακόμα περισσότερο ο χώρος αναζήτησης του _brute forcing_ [<sup>\[8\]</sup>](#8--httpsctf101orgbinary-exploitationstack-canariesbruteforcing-a-stack-canary)
+   
+   Έτσι κάνοντας brute force byte per byte, θα χρειαζόμασταν το πολύ 3\*255 = **765** προσπάθεις, κάτι που είναι αποδεκτό για ένα τέτοιο attack.
 <br/>
 
-
-8. Ωστόσο, υπάρχουν και άλλοι πιο εύκολοι τρόποι για να επιτευχθεί το παρόν attack και γι'αυτό συνεχίσαμε χωρίς να εκμεταλλευτούμε αυτό το κενό.
+8. Ωστόσο, υπάρχουν και άλλοι πιο εύκολοι τρόποι για να επιτευχθεί το παρόν attack και γι'αυτό συνεχίσαμε χωρίς να εκμεταλλευτούμε το παραπάνω κενό 
+   ή κάνοντας brute force.
+   
    Μέσω του gdb και μετά από σχετική αναζήτηση, βρήκαμε ότι τα συγκεκριμένα canaries είναι **Random Terminator Canaries** και έτσι καταλάβαμε το
-   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)
+   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)[<sup>\[10\]</sup>](#10--httpswwwusenixorglegacypublicationslibraryproceedingssec98full_paperscowancowanpdf)[<sup>\[11\]</sup>](#11--httpstaffustceducnbjhuacoursessecurity2014readingsstackguard-bypasspdf)
+   
+   Βρήκαμε δηλαδή ότι παράγονται κατά το initialization του server και παραμένει ίδιο για κάθε κλήση συνάρτησης που περιέχει κάποιον πίνακα.
+   
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/19-Random_Terminator_Canaries.png)
+   
+   Αυτό άμεσα δηλώνει ότι μπορούμε να κάνουμε leak την τιμή του canary της **`check_auth()`** μέσω του **FSA** που μπορούμε να κάνουμε εκεί και να το 
+   χρησιμοποιήσουμε για να "επαναφέρουμε" την τιμή του canary της **`post_param()`**.
+   
+   Έτσι, διαβάζοντας την assembly μέσω του gdb βρήκαμε ότι το canary αποθηκεύεται στη θέση **$ebp - 0xC**. 
+   
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/20-Stored_Canary.png)
+   
+   Γι'αυτό έπρεπε να υπολογίσουμε το **offset** από τη μεταβλητή ***auth_username*** η οποία χρησιμοποιείται για το **FSA**. \
+   Αρχικά, βρήκαμε το offset μεταξύ του **ορίσματος** της `printf()` και του **ebp** της `check_auth()`, που είναι ίσο με: **0x78 = 30\*4 = 120 bytes**. \
+   Αρα, ξέραμε άμεσα ότι το canary βρίσκεται **0xC** bytes πιο χαμηλά από τον ebp, αρα είχαμε το offset ίσο με: **0x6C = 27\*4 = 108 bytes = **.
+   
+   Έτσι, κάνοντας αρχικά ένα request οπως αυτό του Part_2 με payload: **%27$x** παίρνουμε την τιμή του canary!
+   
+   ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/21-Canary_Value.png)
+
+<br/>
+
+9. 
+   
    
 
 ## References
@@ -407,3 +436,5 @@
 <h5><sup>[7]</sup>  https://www.cvedetails.com/vulnerability-list/vendor_id-72/product_id-960/version_id-219995/GNU-GCC-5.4.html</h5>
 <h5><sup>[8]</sup>  https://ctf101.org/binary-exploitation/stack-canaries/#bruteforcing-a-stack-canary</h5>
 <h5><sup>[9]</sup>  https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries</h5>
+<h5><sup>[10]</sup>  https://www.usenix.org/legacy/publications/library/proceedings/sec98/full_papers/cowan/cowan.pdf</h5>
+<h5><sup>[11]</sup>  http://staff.ustc.edu.cn/~bjhua/courses/security/2014/readings/stackguard-bypass.pdf</h5>
