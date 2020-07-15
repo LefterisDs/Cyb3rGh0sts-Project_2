@@ -826,7 +826,7 @@
 6. Μέσα στο **z.log** βρήκαμε τις πληροφορίες που θα μας οδηγούσαν στον κωδικό του Plan_Z.
 
    Το πρώτο κομμάτι του κωδικού το αποκρυπτογραφήσαμε εύκολα, βρίσκοντας πληροφορίες για ένα εξαιρετικά ιστορικό σκακιστικό παιχνίδι μεταξύ 
-   του **Garry Kasparov** και του **Deep Blue**. [<sup>\[15\]</sup>](#15--httpsenwikipediaorgwikiStack_buffer_overflowProtection_schemes)[<sup>\[16\]</sup>](#16--httpsenwikipediaorgwikiStack_buffer_overflowProtection_schemes)
+   του **Garry Kasparov** και του **Deep Blue**. [<sup>\[15\]</sup>](#15--httpsenwikipediaorgwikideep_blue_versus_garry_kasparovgame_6_2)[<sup>\[16\]</sup>](#16--httpwwwkasparovcomtimeline-eventdeep-blue)
    
    Έτσι η κίνηση που έπρεπε να βρούμε ήταν η εκείνη που έκανε τον Kasparov να παραιτηθεί από την παρτίδα και να δώσει τη νίκη στον Deep Blue.
    
@@ -834,7 +834,22 @@
    
    |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/30-Kasparov_vs_Deep_Blue_Mov18.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/31-Kasparov_vs_Deep_Blue_Mov19.png)|
    |-|-|
+    
+<br/>
+
+7. Έμενε πλέον να βρούμε την Public IP του μηχανήματος στο οποίο τρέχει ο pico server.
    
+   Αρχικά, αναζητούσαμε επιθέσεις όπως **SSL Certificates Attack**. [<sup>\[17\]</sup>](#17--httpswwwnetsparkercomblogweb-securityexposing-public-ips-tor-services-through-ssl-certificates)[<sup>\[18\]</sup>](#18--httpswwwbleepingcomputercomnewssecuritypublic-ip-addresses-of-tor-sites-exposed-via-ssl-certificates) 
+   Ωστόσο, σύντομα είδαμε ότι δεν θα αποδώσει ο τρόπος αυτός κάποιο αποτέλεσμα και ξαναγυρίσαμε στην ιδέα κάποιου πιο advanced **BOF**.
+   
+   Πρώτα, κάναμε retrieve πάρα πολλά αρχεία του συστήματος με το attack του προηγούμενου βήματος, όπως αρχεία του **`/proc/net/`** directory, μήπως και βρισκόταν
+   κάπου εκεί η Public IP του μηχανήματος.
+   
+   Το σημαντικότερο από αυτά που βρήκαμε ήταν η IP του Guard Relay του server στο Tor: **153.92.127.239:443** _(Netherlands)_
+   
+<br/>
+
+8. Στη συνέχεια λοιπόν, σκεφτήκαμε να κάνουμε το **Return to Libc Attack**.
    
    
 
@@ -858,4 +873,7 @@
 <h5><sup>[13]</sup>  https://uaf.io/exploitation/2015/09/29/Stack-CANARY-Overwrite-Primer.html</h5>
 <h5><sup>[14]</sup>  https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-silberman/bh-us-04-silberman-paper.pdf#page=6</h5>
 <h5><sup>[15]</sup>  https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov#Game_6_2</h5>
-<h5><sup>[16]</sup>  https://books.google.gr/books?id=-YL8AAAAQBAJ&pg=PA32&lpg=PA32&dq=1.+e4+c6+2.+d4+d5+3.+Nc3+dxe4+4.+Nxe4+Nd7+5.+Ng5+Ngf6+6.+Bd3+e6+7.+N1f3+h6+8.+Nxe6+Qe7+9.+0-0+fxe6+10.+Bg6%2B+Kd8+11.+Bf4+b5+12.+a4+Bb7+13.+Re1+Nd5+14.+Bg3+Kc8+15.+axb5+cxb5+16.+Qd3+Bc6+17.+Bf5+exf5+18.+Rxe7+Bxe&source=bl&ots=MQO8obder2&sig=ACfU3U3sevdTFhYDV1QTXtZg22lmyNbRRw&hl=el&sa=X&ved=2ahUKEwjh2am88_npAhWxAGMBHckeBL8Q6AEwAHoECAoQAQ#v=onepage&q=1.%20e4%20c6%202.%20d4%20d5%203.%20Nc3%20dxe4%204.%20Nxe4%20Nd7%205.%20Ng5%20Ngf6%206.%20Bd3%20e6%207.%20N1f3%20h6%208.%20Nxe6%20Qe7%209.%200-0%20fxe6%2010.%20Bg6%2B%20Kd8%2011.%20Bf4%20b5%2012.%20a4%20Bb7%2013.%20Re1%20Nd5%2014.%20Bg3%20Kc8%2015.%20axb5%20cxb5%2016.%20Qd3%20Bc6%2017.%20Bf5%20exf5%2018.%20Rxe7%20Bxe&f=false</h5>
+<h5><sup>[16]</sup>  http://www.kasparov.com/timeline-event/deep-blue/</h5>
+<h5><sup>[17]</sup>  https://www.netsparker.com/blog/web-security/exposing-public-ips-tor-services-through-ssl-certificates/</h5>
+<h5><sup>[18]</sup>  https://www.bleepingcomputer.com/news/security/public-ip-addresses-of-tor-sites-exposed-via-ssl-certificates/</h5>
+
