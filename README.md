@@ -324,7 +324,7 @@
 
 7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**.
    
-   Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληοροφρίες για το ***Missing Part for Plan X***.
+   Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληροφορίες για το ***Missing Part for Plan X***!
    
    > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/12-Plan_X.png)
 
@@ -496,7 +496,7 @@
 10. Ωστόσο, παρατηρήσαμε ότι καθυστερεί υπερβολικά να στείλει την απάντηση και τρέχοντας το τοπικά, είδαμε ότι αλλάζοντας απλά το return 
     address της `check_auth()` ώστε να πάει κατευθείαν στην **κλήση** της **`serve_ultimate()`**, τότε προκύπτει **SIGSEGV**, το οποίο οφείλεται 
     στο ότι η `serve_ultimate()` επιστρέφει κανονικά στην **`route()`** και όταν φτάνει στη γραμμή main.c:**63** όπου γίνεται το **`free()`**, 
-    το όρισμα της (**given_pwd**) που θα αρχικοποιούνταν αμέσως μετά την κανονική επιστροφή της `post_param()`, δεν έχει γίνει τελικά και έτσι
+    το όρισμα της (**given_pwd**) που θα αρχικοποιούνταν αμέσως μετά την κανονική επιστροφή της `post_param()`, δεν έχει τελικά αρχικοποιηθεί και έτσι
     έχοντας μια τυχαία τιμή προκύπτει το ***segmentation fault***.
     
     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/24-Serve_Ultimate_SIGSEGV.png)
@@ -582,7 +582,10 @@
  
        </p>
     </details><br/>
-    Ετσι, πετύχαμε να παίρνουμε το _ultimate.html_ άμεσα και να κάνουμε το παιδί να τερματίζει ομαλά χωρίς να αφήνουμε κάποιο ίχνος όπως ένα segmentation fault.
+    
+    Ετσι, πετύχαμε να παίρνουμε το **ultimate.html** άμεσα και να κάνουμε το παιδί να τερματίζει ομαλά χωρίς να αφήνουμε κάποιο ίχνος όπως ένα segmentation fault.
+    
+    Μέσω αυτού λοιπόν, βρήκαμε τις πληροφορίες για τα ***Preliminary Results of Plan Y***!
     
     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/25-Ultimate_Data.png)
 
