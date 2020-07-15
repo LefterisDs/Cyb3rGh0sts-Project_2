@@ -490,7 +490,7 @@
       
       # ------------------------------------------------------
       # Run: python3 bof.py <port>
-        eg.: python3 bof.py 8000
+      # eg.: python3 bof.py 8000
       ```
 
       </p>
@@ -585,7 +585,7 @@
 
       # ------------------------------------------------------
       # Run: python3 bof.py <port>
-        eg.: python3 bof.py 8000
+      # eg.: python3 bof.py 8000
        ```
  
        </p>
@@ -687,7 +687,7 @@
       
       # ------------------------------------------------------
       # Run: python3 bof.py <port> <file_to_retrieve>
-        eg.: python3 bof.py 8000 /var/log/z.log
+      # eg.: python3 bof.py 8000 /var/log/z.log
       ```
        
       </p>
@@ -806,7 +806,7 @@
       
       # ------------------------------------------------------
       # Run: python3 bof.py <port> <file_to_retrieve>
-        eg.: python3 bof.py 8000 /var/log/z.log
+      # eg.: python3 bof.py 8000 /var/log/z.log
       ```
        
       </p>
@@ -816,8 +816,24 @@
    
    &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/29-Z_Log_Data.png)
 
+<br/>
+
+5. Στη συνέχεια πήραμε τον κωδικό που είναι στο /etc/admin_pwd για να μπορούμε να μπαίνουμε και κανονικά στο ultimate.html μέσω browser.
    
-5. 
+   > Password: **kdje34123asdfasd23D**   
+<br/>
+
+6. Μέσα στο **z.log** βρήκαμε τις πληροφορίες που θα μας οδηγούσαν στον κωδικό του Plan_Z.
+
+   Το πρώτο κομμάτι του κωδικού το αποκρυπτογραφήσαμε εύκολα, βρίσκοντας πληροφορίες για ένα εξαιρετικά ιστορικό σκακιστικό παιχνίδι μεταξύ 
+   του **Garry Kasparov** και του **Deep Blue**. [<sup>\[15\]</sup>](#15--httpsenwikipediaorgwikiStack_buffer_overflowProtection_schemes)[<sup>\[16\]</sup>](#16--httpsenwikipediaorgwikiStack_buffer_overflowProtection_schemes)
+   
+   Έτσι η κίνηση που έπρεπε να βρούμε ήταν η εκείνη που έκανε τον Kasparov να παραιτηθεί από την παρτίδα και να δώσει τη νίκη στον Deep Blue.
+   
+   Εν προκειμένω πρόκειται για την κίνηση **c4**.
+   
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/30-Kasparov_vs_Deep_Blue_Mov18.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/31-Kasparov_vs_Deep_Blue_Mov19.png)|
+   |-|-|
    
    
    
@@ -841,3 +857,5 @@
 <h5><sup>[12]</sup>  http://staff.ustc.edu.cn/~bjhua/courses/security/2014/readings/stackguard-bypass.pdf</h5>
 <h5><sup>[13]</sup>  https://uaf.io/exploitation/2015/09/29/Stack-CANARY-Overwrite-Primer.html</h5>
 <h5><sup>[14]</sup>  https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-silberman/bh-us-04-silberman-paper.pdf#page=6</h5>
+<h5><sup>[15]</sup>  https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov#Game_6_2</h5>
+<h5><sup>[16]</sup>  https://books.google.gr/books?id=-YL8AAAAQBAJ&pg=PA32&lpg=PA32&dq=1.+e4+c6+2.+d4+d5+3.+Nc3+dxe4+4.+Nxe4+Nd7+5.+Ng5+Ngf6+6.+Bd3+e6+7.+N1f3+h6+8.+Nxe6+Qe7+9.+0-0+fxe6+10.+Bg6%2B+Kd8+11.+Bf4+b5+12.+a4+Bb7+13.+Re1+Nd5+14.+Bg3+Kc8+15.+axb5+cxb5+16.+Qd3+Bc6+17.+Bf5+exf5+18.+Rxe7+Bxe&source=bl&ots=MQO8obder2&sig=ACfU3U3sevdTFhYDV1QTXtZg22lmyNbRRw&hl=el&sa=X&ved=2ahUKEwjh2am88_npAhWxAGMBHckeBL8Q6AEwAHoECAoQAQ#v=onepage&q=1.%20e4%20c6%202.%20d4%20d5%203.%20Nc3%20dxe4%204.%20Nxe4%20Nd7%205.%20Ng5%20Ngf6%206.%20Bd3%20e6%207.%20N1f3%20h6%208.%20Nxe6%20Qe7%209.%200-0%20fxe6%2010.%20Bg6%2B%20Kd8%2011.%20Bf4%20b5%2012.%20a4%20Bb7%2013.%20Re1%20Nd5%2014.%20Bg3%20Kc8%2015.%20axb5%20cxb5%2016.%20Qd3%20Bc6%2017.%20Bf5%20exf5%2018.%20Rxe7%20Bxe&f=false</h5>
