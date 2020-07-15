@@ -193,23 +193,23 @@
     (καθώς η τελευταία τροποίηση αρχείου αρχείου και των δύο onion είναι στις 2020-06-xx) και βρήκαμε τελικά τη σωστή ημερομηνία.
     
     ```python
-      from hashlib import sha256
+    from hashlib import sha256
 
-      for i in range(1,7):
-         for j in range(1,32):
-            passphrase = "2020-0" + str(i) + "-"
-         
-            if j < 10:
-               passphrase = passphrase + "0" + str(j)
-            else:
-               passphrase = passphrase + str(j)
-               passphrase = passphrase + " raccoon"
-               key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
+    for i in range(1,7):
+       for j in range(1,32):
+          passphrase = "2020-0" + str(i) + "-"
 
-               if "d1689c23e86421529297" in key:
-                  print(passphrase)
-                  print(key)
-                  exit()
+          if j < 10:
+             passphrase = passphrase + "0" + str(j)
+          else:
+             passphrase = passphrase + str(j)
+             passphrase = passphrase + " raccoon"
+             key = sha256(passphrase.encode('utf8').rstrip()).hexdigest()
+
+             if "d1689c23e86421529297" in key:
+                print(passphrase)
+                print(key)
+                exit()
     ```
 
     Ελέγχαμε αν το κομμάτι του hash που είχε το _truncated file_ περιέχεται σε αυτό που φτιάξαμε και εύκολα βρίσκουμε
@@ -242,23 +242,23 @@
     Ακολουθώντας εύκολα πλέον τα 4 βήματα που είχε μέσα κατασκευάσαμε με ένα script τις συντεταγμένες του και ολοκληρώσαμε το ερώτημα!
     
     ```python
-      from hashlib import sha256
+    from hashlib import sha256
 
-      key = sha256(b"cybergh0sts").hexdigest()
+    key = sha256(b"cybergh0sts").hexdigest()
 
-      x = "0." + str(key[:16])
-      y = "0." + str(key[16:32])
+    x = "0." + str(key[:16])
+    y = "0." + str(key[16:32])
 
-      mult = 1/16
-      lat  = 0.0
-      long = 0.0
-      for i in range(2,18):
-          lat  = lat  + int(x[i],16) * mult
-          long = long + int(y[i],16) * mult
-          mult = mult / 16
+    mult = 1/16
+    lat  = 0.0
+    long = 0.0
+    for i in range(2,18):
+        lat  = lat  + int(x[i],16) * mult
+        long = long + int(y[i],16) * mult
+        mult = mult / 16
 
-      print("Latitude : %.30lf"%lat)
-      print("Longitude: %.30lf"%long)
+    print("Latitude : %.30lf"%lat)
+    print("Longitude: %.30lf"%long)
     ```
 
     **Location**&nbsp;&nbsp;: Vaux-Saules, 21440, France\
@@ -273,14 +273,14 @@
 1. Αρχικά εγκαταστήσαμε τοπικά τον **pico server** και κατά το compilation εμφανίστηκε ένα warning που μας έδωσε το 1<sup>ο</sup> βήμα 
    για το attack που πρέπει να κάνουμε.
    
-   > ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/6-FSA_Warning.png)
+   &emsp; ![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/6-FSA_Warning.png)
     
 <br/>
 
 2. Μετά διαβάζοντας και το αντίστοιχο κομμάτι κώδικα και έπειτα από σχετική αναζήτηση, βρήκαμε ότι ένα πολύ ισχυρό attack που μπορεί να 
    γίνει σε μια τέτοια ***printf***, είναι το **Format String Attack**. [<sup>\[5\]</sup>](#5--httpsowasporgwww-communityattacksformat_string_attack)[<sup>\[6\]</sup>](#6--httpscs155stanfordedupapersformatstring-12pdfpage11)
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/7-Format_String_attack.png)
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/7-Format_String_attack.png)
    
 <br/>
 
@@ -316,17 +316,18 @@
      
    Έτσι πήραμε το εξής response: **admin:f68762a532c15a8954be87b3d3fc3c31**
 
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/10-Prompt_FSA_Results.png)
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/10-Prompt_FSA_Results.png)
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/11-Headers_FSA_Results.png)
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/11-Headers_FSA_Results.png)
 
 <br/>
 
 7. Στη συνέχεια μέσω κάποιων online ***md5 databases***, βρήκαμε το decryption του hashed password που είναι: **you shall not pass**.
    
-   Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληοροφρίες για το ***Missing Part for Plan X***.
+   Έτσι, περάσαμε τον αρχικό έλεγχο και πήραμε το **index.html**, που περιείχε πληροφορίες για το ***Missing Part for Plan X***!
    
-   > ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/12-Plan_X.png)
+   |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/12-Plan_X.png)|
+   |-|
 
 ---
 ---
@@ -334,7 +335,6 @@
 ## &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Part 3 (Preliminary Results of Plan Y)
 
 1. Αρχικά και εδώ, ξεκινήσαμε δοκιμάζοντας να κάνουμε κάποιο **SQL Injection** για να παρακάμψουμε τον έλεγχο.
-<br/>
 
 2. Στη συνέχεια, ξαναδιαβάζοντας τον κώδικα, είδαμε πως υπάρχει ένας πίνακας **admin_pwd[1]** που έχει το ίδιο όνομα με το όνομα του 
    prompt που υπάρχει στη σελίδα του 3<sup>ου</sup> .onion link.
@@ -496,7 +496,7 @@
 10. Ωστόσο, παρατηρήσαμε ότι καθυστερεί υπερβολικά να στείλει την απάντηση και τρέχοντας το τοπικά, είδαμε ότι αλλάζοντας απλά το return 
     address της `check_auth()` ώστε να πάει κατευθείαν στην **κλήση** της **`serve_ultimate()`**, τότε προκύπτει **SIGSEGV**, το οποίο οφείλεται 
     στο ότι η `serve_ultimate()` επιστρέφει κανονικά στην **`route()`** και όταν φτάνει στη γραμμή main.c:**63** όπου γίνεται το **`free()`**, 
-    το όρισμα της (**given_pwd**) που θα αρχικοποιούνταν αμέσως μετά την κανονική επιστροφή της `post_param()`, δεν έχει γίνει τελικά και έτσι
+    το όρισμα της (**given_pwd**) που θα αρχικοποιούνταν αμέσως μετά την κανονική επιστροφή της `post_param()`, δεν έχει τελικά αρχικοποιηθεί και έτσι
     έχοντας μια τυχαία τιμή προκύπτει το ***segmentation fault***.
     
     ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/24-Serve_Ultimate_SIGSEGV.png)
@@ -582,9 +582,12 @@
  
        </p>
     </details><br/>
-    Ετσι, πετύχαμε να παίρνουμε το _ultimate.html_ άμεσα και να κάνουμε το παιδί να τερματίζει ομαλά χωρίς να αφήνουμε κάποιο ίχνος όπως ένα segmentation fault.
     
-    ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/25-Ultimate_Data.png)
+    Ετσι, πετύχαμε να παίρνουμε το **ultimate.html** άμεσα και να κάνουμε το παιδί να τερματίζει ομαλά χωρίς να αφήνουμε κάποιο ίχνος όπως ένα segmentation fault.
+    
+    Μέσω αυτού λοιπόν, βρήκαμε τις πληροφορίες για τα ***Preliminary Results of Plan Y***!
+    
+    &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/25-Ultimate_Data.png)
 
 
    
