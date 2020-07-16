@@ -1007,7 +1007,7 @@
    > the code is <c4\><3.85.143.73\>
    >
    > Cybergh0sts out!
-   
+   <br/>
 
 ## Improvements
 
@@ -1550,7 +1550,7 @@ binary_payload.write(argument)
    |python3 rev_shell.py 8000 /proc/self/maps -t None|Αλλάζει το timeout του request (χρησιμεύει κυρίως για πειραματισμούς)|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/37-Rev_Shell_Example4.png)|
    |python3 rev_shell.py 8000 /proc/net/tcp -xd respond.txt -xp payload.txt|Κάνει εξαγωγή του respond και του payload αντιστοίχως, στα αρχεία που δόθηκαν ως ορίσματα|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/38-Rev_Shell_Example5.png)|
    |python3 rev_shell.py 8000 /etc/admin_pwd -d|Απενεργοποιεί τα μηνύματα προόδου του request|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/39-Rev_Shell_Example6.png)|
-   |python3 rev_shell.py 8000 -rs|Ενεργοποιεί την προσομοίωση του **Reverse Shell*|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/40-Rev_Shell_Example7.png)|
+   |python3 rev_shell.py 8000 -rs|Ενεργοποιεί την προσομοίωση του **Reverse Shell**|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/40-Rev_Shell_Example7.png)|
    
    </p>
 </details><br/>
