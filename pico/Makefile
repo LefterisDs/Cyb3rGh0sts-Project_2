@@ -2,8 +2,8 @@
 # We need a 32-bit libs for this:
 #   apt-get install libc6-dev-i386 libssl-dev:i386
 
-CFLAGS = -g -fPIE
-LDFLAGS = -pie
+CFLAGS = -g -fPIE -m32
+LDFLAGS = -pie -m32
 
 all: server
 

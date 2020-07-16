@@ -52,15 +52,11 @@ void serve_forever(const char *PORT)
         addrlen = sizeof(clientaddr);
         clients[slot] = accept(listenfd, (struct sockaddr *)&clientaddr, &addrlen);
         
-        fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ACCEPTED CONNECTION \033[0m\n");
         if (clients[slot] < 0) {
             perror("accept() error");
         } else {
-            respond(slot);
-            // if (fork() == 0) {
-            //     respond(slot);
-            //     exit(0);
-            // }
+        //    respond(slot);
+            if (fork() == 0) { respond(slot); exit(0); }
         }
 
         while (clients[slot] != -1)
@@ -137,7 +133,6 @@ void respond(int n)
     buf  = malloc(65535);
     rcvd = recv(clients[n], buf, 65535, 0);
 
-    fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR %d \033[0m\n", rcvd);
 
     // receive error
     if (rcvd < 0) 
@@ -155,15 +150,11 @@ void respond(int n)
         uri    = strtok(NULL, " \t");
         prot   = strtok(NULL, " \t\r\n");
 
-        fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> METHOD %s \033[0m\n", method);
-        fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> URI    %s \033[0m\n", uri);
-        fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PROT   %s \033[0m\n", prot);
         
         fprintf(stderr, "\x1b[32m + [%s] %s\x1b[0m\n", method, uri);
 
         qs = strchr(uri, '?');
 
-        fprintf(stderr,"\033[94m >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> QS     %s \033[0m\n", qs);
         // split URI
         if (qs) {
             *qs++ = '\0'; 
